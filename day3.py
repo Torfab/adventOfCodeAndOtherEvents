@@ -7,8 +7,8 @@ def rucksackValue(character):
   else:
     return ord(character)-96
 
-def mbare():
-  rows= openFile("day3Input.txt")
+def solve1():
+  rows= getAocInput(3)
 
   spareElements=[]
 
@@ -41,17 +41,15 @@ def mbare():
   accumulatore=0
   for element in spareElements:
     accumulatore=accumulatore+rucksackValue(element)
-  print(accumulatore)
-#mbare()
 
-def mbare2():
-  rows= openFile("day3Input.txt")
+  return(accumulatore)
 
+def solve2():
+  rows= getAocInput(3)
+  
   badgeElements=[]
 
   i=0
-
-  
 
   for rucksack in rows:
 
@@ -74,5 +72,9 @@ def mbare2():
   accumulatore=0
   for element in badgeElements:
     accumulatore=accumulatore+rucksackValue(element)
-  print(accumulatore)
-mbare2()
+
+  
+  return accumulatore
+
+print(solve1())
+print(solve2())
