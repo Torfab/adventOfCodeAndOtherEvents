@@ -19,10 +19,16 @@ def openFile(path):
 def sumArrayValueByValue(a, b):
   return list(map(sum, zip(a, b)))
 
+def sumArrayValueByValueSeparated(a, b, c):
+  return a+c[0], b+c[0]
+
+
 
 def getAoCInputGeneric(year, day):
   return aocd.get_data(day=day, year=year).split("\n")
 
 
 def getAocInput(day):
+  if(day==-1):
+    return openFile("test.txt")
   return getAoCInputGeneric(date.today().year, day)
