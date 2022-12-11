@@ -4,15 +4,11 @@ import aocd
 
 
 def openFile(path):
+  
   file = open(path, "r")
   rows = []
-  i = 0
-  while True:
-    row = file.readline().strip()
-    if not row:
-      break
-    rows.append(row)
-    i += 1
+  for line in file:
+    rows.append(line.rstrip("\r\n"))
   return rows
 
 
@@ -24,11 +20,10 @@ def sumArrayValueByValueSeparated(a, b, c):
 
 
 
-def getAoCInputGeneric(year, day):
-  return aocd.get_data(day=day, year=year).split("\n")
-
-
-def getAocInput(day):
+def getAocInput(day, year=date.today().year):
   if(day==-1):
     return openFile("test.txt")
-  return getAoCInputGeneric(date.today().year, day)
+  return aocd.get_data(day=day, year=year).split("\n")
+
+def submitToday(answer):
+  return aocd.submit(answer)
