@@ -72,7 +72,6 @@ def playARound(monkeys, part, modulo):
 
 def solve(days, part):
   rows= getAocInput(11)
-
   monkeys=comprehension(rows)
   
   modulo=1
@@ -82,14 +81,12 @@ def solve(days, part):
   for i in range(days):
     playARound(monkeys, part, modulo)
 
-
   resultArray=[]
   for monkey in monkeys:
     resultArray.append(monkey["inspected"])
-
-
   resultArray.sort()
   result=resultArray[-1]*resultArray[-2]
+  
   return result
 
 print(solve(20,"a"))

@@ -33,7 +33,7 @@ def fromInputBuildComprehension(input: list):
 
 
 def solve(countArray):
-  rows= getAoCInputGeneric(2021, 8)
+  rows= getAocInput(8,2021)
 
   accumulatore=0  
 
@@ -53,7 +53,7 @@ def solve(countArray):
 
 
 def solve2():
-  rows= getAoCInputGeneric(2021, 8)
+  rows= getAocInput(8,2021)
   
   accumulatore=0  
 
