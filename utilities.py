@@ -15,6 +15,9 @@ def openFile(path):
 def sumArrayValueByValue(a, b):
   return list(map(sum, zip(a, b)))
 
+def multiplyArrayByValue(array, value):
+  return [value*a for a in array]
+
 def sumArrayValueByValueSeparated(a, b, c):
   return a+c[0], b+c[0]
 
