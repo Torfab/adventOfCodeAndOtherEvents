@@ -1,6 +1,6 @@
 from utilities import *
 
-distanceVector=[[0,1],[0,-1],[1,0],[-1,0]]
+distanceVector=[[0,1],[0,-1],[-1,0],[1,0]]
 
 def heightOfElement(element):
   return ord(element)-97
@@ -24,14 +24,54 @@ def comprehension(rows):
 
 
 
-def solve():
-  rows= getAocInput(-1)
-  newRows, startingPoint, EndingPoint= comprehension(rows)
+def solve(part):
+  rows= getAocInput(12)
+  rows, startingPoint, endingPoint= comprehension(rows)
 
-  currentPoint=startingPoint
+  startingPoints=[]
+  if(part=="a"):
+    startingPoints.append(startingPoint)
+  if(part=="b"):
+    for idx,row in enumerate(rows):
+      for jdx, column in enumerate(row):
+        if(column==0):
+          startingPoints.append([idx,jdx])
 
-  print(newRows)
+  coordinatesVisitedFromStart=[]
+  borderOfSearch=[]
+
+  for element in startingPoints:
+    coordinatesVisitedFromStart.append(element)
+    borderOfSearch.append(element)
 
 
+  round=0
+  while(len(borderOfSearch)>0):
+    for idx in reversed(range(len(borderOfSearch))):
+      avoid=[]
+      currentPosition=borderOfSearch[idx]
+      if(currentPosition[0]==0):
+        avoid.append(2)
+      if(currentPosition[0]==len(rows)-1):
+        avoid.append(3)
+      if(currentPosition[1]==0):
+        avoid.append(1)
+      if(currentPosition[1]==len(rows[0])-1):
+        avoid.append(0)
+      
+      for direction in range(4):
+        if direction in avoid:
+          continue
+        newPosition=sumArrayValueByValue(borderOfSearch[idx],distanceVector[direction])
+        
+        if(rows[currentPosition[0]][currentPosition[1]]-(rows[newPosition[0]][newPosition[1]])>=-1):
+          if(str(newPosition) not in coordinatesVisitedFromStart):
+            if(str(newPosition)==str(endingPoint)):
+              return round+1
+            coordinatesVisitedFromStart.append(str(newPosition))
+            borderOfSearch.append(newPosition)
+      borderOfSearch.pop(idx)
+    round=round+1
 
-solve()
+print(solve("a"))
+print(solve("b"))
