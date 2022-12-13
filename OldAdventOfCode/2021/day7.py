@@ -22,7 +22,7 @@ def solve(distance):
 
   minFuel=99999999999999
   for candidate in range(maxCrab+1):
-    minFuel=min(distance(crabs, candidate), minIndex)
+    minFuel=min(distance(crabs, candidate), minFuel)
   return minFuel
 
 
