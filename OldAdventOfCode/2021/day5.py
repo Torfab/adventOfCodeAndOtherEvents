@@ -30,33 +30,35 @@ def markGridSpecial(xSplit, ySplit, markedDictionary: dict):
   if(abs(xSplit[0]-ySplit[0])==abs(xSplit[1]-ySplit[1])):
     if(xSplit[0]>ySplit[0]):
       startingPoint=ySplit
+      endPoint=xSplit
     elif(xSplit[0]<ySplit[0]):
       startingPoint=xSplit
+      endPoint=ySplit
 
-    markPoint(startingPoint, markedDictionary)
 
     currentPoint=startingPoint
+    markPoint(currentPoint, markedDictionary)
     for element in range(abs(xSplit[0]-ySplit[0])):
 
-      if(startingPoint[1]>startingPoint[0]):
-        currentPoint=sumArrayValueByValue(startingPoint, distanceVector[2])
+      currentPoint=sumArrayValueByValue(currentPoint, distanceVector[2])
+
+      if(startingPoint[1]>endPoint[1]):
+        currentPoint=sumArrayValueByValue(currentPoint, distanceVector[1])
       else:
-        currentPoint=sumArrayValueByValue(startingPoint, distanceVector[3])
+        currentPoint=sumArrayValueByValue(currentPoint, distanceVector[0])
       markPoint(currentPoint, markedDictionary)
 
 def solve(markerFunction):
-  rows=getAocInput(-1)
+  rows=getAocInput(5,2021)
   markedDictionary=dict()
   for element in rows:
     splitted=element.split(" -> ")
-    xSplit=splitted[0].split(",")
-    ySplit=splitted[1].split(",")
+    xSplit=splitted[1].split(",")
+    ySplit=splitted[0].split(",")
 
     markerFunction(xSplit, ySplit, markedDictionary)
   
-  print(markedDictionary)
-
   return len([a for a in markedDictionary.values() if a>1])
 
-# print(solve(markGrid))
+print(solve(markGrid))
 print(solve(markGridSpecial))
