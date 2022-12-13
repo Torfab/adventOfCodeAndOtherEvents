@@ -1,6 +1,42 @@
 from utilities import *
 import functools
 
+def parseArray(a):
+  myArray=[]
+  if(a[0]=='['):
+    cursor=1
+    for idx in range(1,len(a)):
+      if(a[idx]=='['):
+        cursor=cursor+1
+      if(a[idx]==']'):
+        cursor=cursor-1
+        if(cursor==0):
+          things=''
+          secondCursor=0
+          start=0
+          for jdx in range(1,idx):
+            if(a[jdx]=='['):
+              if(secondCursor==0):
+                start=jdx
+              secondCursor=secondCursor+1
+            elif(a[jdx]==']'):
+              secondCursor=secondCursor-1
+              if(secondCursor==0):
+                myArray.append(parseArray(a[start:jdx+1]))
+            elif(secondCursor==0):
+              if(a[jdx]!=" " and a[jdx]!=","):
+                things=things+a[jdx]
+              else:
+                if(len(things)>0):
+                  myArray.append(int(things))    
+                  things=''
+          if(len(things)>0):
+            myArray.append(int(things))
+  else:
+    return "error"
+  return myArray            
+
+
 def rightOrder(a,b):
   paddingSize=abs(len(a)-len(b))
   resultIfFinish=0
@@ -12,9 +48,17 @@ def rightOrder(a,b):
 
   for idx in range(max(len(a),len(b))-paddingSize):
     if(isinstance(a[idx], int) and isinstance(b[idx], list)):
-      a[idx]=[a[idx]]
+      rightOrderResult=rightOrder([a[idx]], b[idx])
+      if(rightOrderResult==0):
+        continue
+      else:
+        return rightOrderResult
     if(isinstance(a[idx], list) and isinstance(b[idx], int)):
-      b[idx]=[b[idx]]
+      rightOrderResult=rightOrder(a[idx], [b[idx]])
+      if(rightOrderResult==0):
+        continue
+      else:
+        return rightOrderResult
 
     if(isinstance(a[idx], int) and isinstance(b[idx], int)):
       if(a[idx]==b[idx]):
@@ -37,9 +81,9 @@ def solve():
 
   for idx, element in enumerate(rows):
     if(idx%3==0):
-      a=eval(element)
+      a=parseArray(element)
     if(idx%3==1):
-      b=eval(element)
+      b=parseArray(element)
       if(rightOrder(a,b)==-1):
         result=result+1+idx//3
 
@@ -65,12 +109,8 @@ def solve2():
 
   result=1
   for idx, element, in enumerate(newArray):
-    if(len(element)==1):
-      a=element.copy()
-      while(isinstance(a,list) and len(a)==1):
-        a=a[0]
-      if(a==2 or a==6):
-        result=result*(idx+1)
+    if(str(element)=='[[2]]' or str(element)=='[[6]]'):
+      result=result*(idx+1)
 
   return result
 
