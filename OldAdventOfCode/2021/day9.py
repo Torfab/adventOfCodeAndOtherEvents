@@ -75,4 +75,5 @@ def solve2():
 
   return result
 
+print(solve1())
 print(solve2())
