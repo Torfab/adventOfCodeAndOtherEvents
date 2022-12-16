@@ -1,8 +1,6 @@
 from utility import *
 
-setMultipleVisit=set()
-
-def updateGraph(graph, arrayOfElement):
+def updateGraph(graph, arrayOfElement, setMultipleVisit):
   if(graph.get(arrayOfElement[0])==None):
     graph[arrayOfElement[0]]=[]
   if(graph.get(arrayOfElement[1])==None):
@@ -14,7 +12,7 @@ def updateGraph(graph, arrayOfElement):
   if(64<ord(arrayOfElement[1][0])<91):
     setMultipleVisit.add(arrayOfElement[1])
   
-def findPaths(key: str, pathStack: list, end:str, graph:dict, done=[True]):
+def findPaths(key: str, pathStack: list, end:str, graph:dict, setMultipleVisit, done=[True]):
   result=0
   for  element in graph[key]:
     if(element==end):
@@ -38,21 +36,20 @@ def findPaths(key: str, pathStack: list, end:str, graph:dict, done=[True]):
         newDone[0]=True
       newStack=pathStack.copy()
       newStack.append(element)
-      result=result+findPaths(element, newStack, end, graph, newDone)
+      result=result+findPaths(element, newStack, end, graph, setMultipleVisit, newDone)
   return result
       
 def solve(part):
   rows=getAocInput(12,2021)
+  setMultipleVisit=set()
 
   graphDict=dict()
   for element in rows:
-    updateGraph(graphDict, element.split("-"))
-
+    updateGraph(graphDict, element.split("-"), setMultipleVisit)
   start='start'
   pathStack=['start']
   done=[part=='a']
-  
-  result=findPaths(start, pathStack, 'end', graphDict, done)
+  result=findPaths(start, pathStack, 'end', graphDict, setMultipleVisit, done)
 
   return result
 
