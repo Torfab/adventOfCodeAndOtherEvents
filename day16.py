@@ -1,8 +1,6 @@
 from utilities import *
 from copy import deepcopy
 
-day=-1
-
 def buildNodeInNodeDict(node, realNodes, rawNodes):
   steps=0
   border=set([rawNodes[node]["name"]])
@@ -22,31 +20,10 @@ def buildNodeInNodeDict(node, realNodes, rawNodes):
       
     border=newBorderSet
   return dict(name=node, flowRate=rawNodes[node]["flowRate"], neighbours=realNeighbours)
-  
-def buildPath(node, path:dict, marked: list, nodeDict):
-  marked.append(node["name"])
-  path["steps"]=path["steps"]+node["distance"]
-  if(path["steps"]>30):
-    print("ooops", path)
-    return
-  path["value"]=path["value"]+nodeDict[node["name"]]["flowRate"]*(30-path["steps"])
-  path["nodes"].append(node["name"])
 
-  for neighbourNode in nodeDict[node["name"]]["neighbours"]:
-    
-    if(neighbourNode["name"] in marked):
-      continue
-
-    buildPath(neighbourNode, deepcopy(path), marked.copy(), nodeDict)
-
-  print(path)
-  return
-
-def solve():
-
-  rawNodeDict=dict()
-  rows=getAocInput(day)
+def comprehensionRows(rows):
   realNodes=[]
+  rawNodeDict=dict()
   for row in rows:
     splitted=row.replace("="," ").replace(",", "").replace(";", "").split(" ")
     for idx, element in enumerate(splitted):
@@ -66,10 +43,47 @@ def solve():
   nodeDict=dict()
   for node in realNodes:
     nodeDict[node]=buildNodeInNodeDict(node, realNodes, rawNodeDict)
-  
-  for node in nodeDict:
-    print(nodeDict[node]["name"], nodeDict[node]["neighbours"])
-  print()
-  buildPath(dict(name='AA', distance=0), dict(nodes=[], value=0, steps=0), [], nodeDict)
+  return nodeDict
 
-solve()
+def buildPath(node, path:dict, marked: list, maxMinutes, nodeDict, allPossiblePaths):
+  marked.append(node["name"])
+  path["steps"]=path["steps"]+node["distance"]
+  if(path["steps"]>maxMinutes):
+    return path["value"]
+  path["value"]=path["value"]+nodeDict[node["name"]]["flowRate"]*(maxMinutes-path["steps"])
+  result=path["value"]
+  allPossiblePaths.append(dict(path=path["nodes"], value=result))
+
+  path["nodes"].append(node["name"])
+
+  for neighbourNode in nodeDict[node["name"]]["neighbours"]:
+    
+    if(neighbourNode["name"] in marked):
+      continue
+
+    result=max(buildPath(neighbourNode, deepcopy(path), marked.copy(), maxMinutes, nodeDict, allPossiblePaths), result)
+  
+  return result
+
+def solve1():
+  rows=getAocInput(day)
+  nodeDict=comprehensionRows(rows)
+  allPossiblePaths=[]
+  return buildPath(dict(name='AA', distance=0), dict(nodes=[], value=0, steps=0), [], 30, nodeDict, allPossiblePaths)
+
+def solve2():
+  rows=getAocInput(day)
+  nodeDict=comprehensionRows(rows)
+  allPossiblePaths=[]
+  buildPath(dict(name='AA', distance=0), dict(nodes=[], value=0, steps=0), [], 26, nodeDict, allPossiblePaths)
+  # return len(allPossiblePaths)
+  result=0
+  for i in range(len(allPossiblePaths)):
+    for j in range(i+1, len(allPossiblePaths)):
+      if(thingInCommonArray(allPossiblePaths[i]["path"][1:], allPossiblePaths[j]["path"][1:])):
+        continue
+      result=max(result, allPossiblePaths[i]["value"]+allPossiblePaths[j]["value"])
+  return result
+
+print(solve1())
+print(solve2())

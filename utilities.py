@@ -44,7 +44,12 @@ def multiplyArrayByValue(array, value):
 def sumArrayValueByValueSeparated(a, b, c):
   return a+c[0], b+c[0]
 
-
+def thingInCommonArray(a,b):
+  for elementA in a:
+    for elementB in b:
+      if(elementA==elementB):
+        return True
+  return False
 
 def getAocInput(day, year=date.today().year):
   if(day==-1):
