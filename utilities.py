@@ -14,6 +14,27 @@ def openFile(path):
 def sumTupleValueByValue(a,b):
   return a[0]+b[0], a[1]+b[1]
 
+def multiplyTupleByValue(a,value):
+  return value*a[0], value*a[1],
+
+def fromDistanceBuildSetOfDirections(distance):
+  x=0
+  y=distance
+
+  resultSet=set()
+  while(x<distance+1):
+    resultSet.add((x,y))
+    resultSet.add((x,-y))
+    resultSet.add((-x,y))
+    resultSet.add((-x,-y))
+    x=x+1
+    y=y-1
+  return resultSet
+
+def distanceBetweenTwoTuples(a,b):
+  return abs(a[0]-b[0])+abs(a[1]-b[1])
+
+
 def sumArrayValueByValue(a, b):
   return list(map(sum, zip(a, b)))
 
