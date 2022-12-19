@@ -1,7 +1,7 @@
 from utilities import *
 
 
-day=-1
+day=19
 
 def comprehension(rows):
   bluePrints=[]
@@ -19,57 +19,89 @@ def comprehension(rows):
   return bluePrints
 
 robots=["geodeRobot", "obsidianRobot", "clayRobot", "oreRobot"]
+robotYield=dict(geodeRobot="geode", obsidianRobot="obsidian", clayRobot="clay", oreRobot="ore")
+maxx=dict()
 
-def findBestRobot(bluePrint, resources):
+def findBestRobot(bluePrint, resources, production, maxElements):
+  candidateRobots=[]
   for robot in robots:
+    if(maxElements[robotYield[robot]]==production[robotYield[robot]]):
+      continue
     candidateRobot=bluePrint[robot]
-    flag=True
+    
+    isItALegitCandidate=True
     for resourceType in candidateRobot:
       if (candidateRobot[resourceType]>resources[resourceType]):
-        flag=False
-    if(flag):
-      return robot
-  return "None"
+        isItALegitCandidate=False
+    if(isItALegitCandidate):
+      candidateRobots.append(robot)
+  return candidateRobots
     
 robotProductionType=dict(oreRobot="ore", clayRobot="clay", obsidianRobot="obsidian", geodeRobot="geode")
 
-def calculateProduction(production, resources, bluePrint, minutes, history):
+def calculateProduction(production, resources, bluePrint, minutes, history, nope, maxElements):
   result=0
   if(minutes==0):
-    if(resources["geode"]==10):
-      print(history)
     return resources["geode"]
   else:
-    robotToBuild=findBestRobot(bluePrint, resources)
-    historyCopyZero=history.copy()
-    historyCopyZero.append(dict(minutes=25-minutes, robot="None", resources=resources))
-    if(robotToBuild=="None"):
-      result=max(calculateProduction(production.copy(), mergeDicts(production, resources), bluePrint, minutes-1, historyCopyZero), result)
-    else:
+    robotToBuild=findBestRobot(bluePrint, resources, production, maxElements)
+    historyCopy=history.copy()
+    if("geodeRobot" in robotToBuild):
       productionCopy=production.copy()
       resourcesCopy=resources.copy()
-      productionCopy[robotProductionType[robotToBuild]]=productionCopy[robotProductionType[robotToBuild]]+1
+      productionCopy[robotProductionType["geodeRobot"]]=productionCopy[robotProductionType["geodeRobot"]]+1
 
-      for element in bluePrint[robotToBuild]:
-        resourcesCopy[element]=resourcesCopy[element]-bluePrint[robotToBuild][element]
+      for element in bluePrint["geodeRobot"]:
+        resourcesCopy[element]=resourcesCopy[element]-bluePrint["geodeRobot"][element]
       historyCopy=history.copy()
-      historyCopy.append(dict(minutes=25-minutes, robot=robotToBuild, resources=resources, newResources=resourcesCopy))
-      result=max(calculateProduction(productionCopy, mergeDicts(production, resourcesCopy), bluePrint, minutes-1, historyCopy), result)
-      if(robotToBuild!="geodeRobot"):
-        result=max(calculateProduction(production.copy(), mergeDicts(production, resources), bluePrint, minutes-1, historyCopyZero), result)
+      result=max(calculateProduction(productionCopy, mergeDicts(production, resourcesCopy), bluePrint, minutes-1, historyCopy, [], maxElements), result)
+    else:
+      candidateRobot= [a for a in robotToBuild if a not in nope]
+      for robot in candidateRobot:
+        productionCopy=production.copy()
+        resourcesCopy=resources.copy()
+        productionCopy[robotProductionType[robot]]=productionCopy[robotProductionType[robot]]+1
+
+        for element in bluePrint[robot]:
+          resourcesCopy[element]=resourcesCopy[element]-bluePrint[robot][element]
+        historyCopy=history.copy()
+        result=max(calculateProduction(productionCopy, mergeDicts(production, resourcesCopy), bluePrint, minutes-1, historyCopy, [], maxElements), result)
+
+      result=max(calculateProduction(production.copy(), mergeDicts(production, resources.copy()), bluePrint, minutes-1, historyCopy, robotToBuild, maxElements), result)
+        
 
   return result
 
-def solve():
+def solve1():
   rows=getAocInput(day)
   blueprints=comprehension(rows)
 
-  for blueprint in blueprints:
-    print(blueprint)
-    geodes=calculateProduction(dict(ore=1, clay=0, obsidian=0, geode=0), dict(ore=0, clay=0, obsidian=0, geode=0), blueprint, 24, [])
-    print("num", geodes)
+  result=0
+  for idx, blueprint in enumerate(blueprints):
+    maxElements=buildmaxx(blueprint)
+    geodes=calculateProduction(dict(ore=1, clay=0, obsidian=0, geode=0), dict(ore=0, clay=0, obsidian=0, geode=0), blueprint, 24, [], [], maxElements)
+    result=result+(idx+1)*geodes
+  return result
 
-  return None
+def buildmaxx(blueprint):
+  maxElements=dict()
+  maxElements["ore"]=max(blueprint["oreRobot"]["ore"], blueprint["clayRobot"]["ore"], blueprint["obsidianRobot"]["ore"], blueprint["geodeRobot"]["ore"])
+  maxElements["clay"]=blueprint["obsidianRobot"]["clay"]
+  maxElements["obsidian"]=blueprint["geodeRobot"]["obsidian"]
+  maxElements["geode"]=9999
 
+  return maxElements
 
-print(solve())
+def solve2():
+  rows=getAocInput(day)
+  blueprints=comprehension(rows[:3])
+
+  result=1
+  for idx, blueprint in enumerate(blueprints):
+    maxElements=buildmaxx(blueprint)
+    geodes=calculateProduction(dict(ore=1, clay=0, obsidian=0, geode=0), dict(ore=0, clay=0, obsidian=0, geode=0), blueprint, 32, [], [], maxElements)
+    result=result*geodes
+  return result
+
+print(solve1())
+print(solve2())
