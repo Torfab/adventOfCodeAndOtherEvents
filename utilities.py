@@ -20,6 +20,9 @@ def sumTriplettesValueByValue(a,b):
 def multiplyTupleByValue(a,value):
   return value*a[0], value*a[1],
 
+def mergeDicts(a,b):
+  return {key: a.get(key, 0) + b.get(key, 0) for key in a}
+
 def fromDistanceBuildSetOfDirections(distance):
   x=0
   y=distance
