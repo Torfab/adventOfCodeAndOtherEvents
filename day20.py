@@ -29,11 +29,8 @@ def solve(decriptionKey, times):
       turnElement=next(a for a in sequence if a["originalPosition"]==step)
       idx1=sequence.index(turnElement)
       idx2=(idx1+turnElement["value"])%(len(sequence)-1)
-      if(idx2==0):
-        idx2=len(sequence)
       # print("sono allo step", step+1, "devo inserire", turnElement, "quindi allo stato attuale tra", idx1, idx2)
-      if(turnElement["value"]!=0):
-        insertElementInList(sequence,idx1,idx2)
+      insertElementInList(sequence,idx1,idx2)
       # print(step+1, [a["value"] for a in sequence])
   
   idx=sequence.index(next(a for a in sequence if a["value"]==0))
