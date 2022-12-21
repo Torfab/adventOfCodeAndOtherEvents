@@ -1,11 +1,15 @@
 from utilities import *
 from copy import deepcopy
 
+
+day=16
+
 def buildNodeInNodeDict(node, realNodes, rawNodes):
   steps=0
   border=set([rawNodes[node]["name"]])
   marked=[rawNodes[node]["name"]]
   realNeighbours=[]
+
   while(len(border)>0 and steps<30):
     steps=steps+1
     newBorderSet=set()
@@ -26,6 +30,8 @@ def comprehensionRows(rows):
   rawNodeDict=dict()
   for row in rows:
     splitted=row.replace("="," ").replace(",", "").replace(";", "").split(" ")
+
+    # On every line i put the node "rawNodeDict" and its neighbour in an attribute of it, IF it's a valve, i put the node name in a list of real nodes
     for idx, element in enumerate(splitted):
       if(idx==1):
         rawNodeDict[element]=dict(name=element, neighbours=[])
@@ -37,9 +43,11 @@ def comprehensionRows(rows):
           realNodes.append(current["name"])
       if(idx>9):
         current["neighbours"].append(element)
+  # I make sure AA is in nodes of main  graph
   if('AA' not in realNodes):
     realNodes.append('AA')
 
+  # I build the real weighted graph here
   nodeDict=dict()
   for node in realNodes:
     nodeDict[node]=buildNodeInNodeDict(node, realNodes, rawNodeDict)
