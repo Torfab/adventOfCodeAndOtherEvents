@@ -2,18 +2,9 @@ from utilities import *
 
 day=20
 
-def swapElementsInDict(mySequence: list, currentPosition1, currentPosition2):
-  auxElement2=mySequence[currentPosition2]
-  mySequence[currentPosition2]=mySequence[currentPosition1]
-  mySequence[currentPosition1]=auxElement2
-  return
-
 def insertElementInList(mySequence: list, currentPosition1, currentPosition2):
   element=mySequence.pop(currentPosition1)
-  if(currentPosition1<currentPosition2):
-    mySequence.insert(currentPosition2, element)
-  else:
-    mySequence.insert(currentPosition2, element)
+  mySequence.insert(currentPosition2, element)
   return
 
 def solve(decriptionKey, times):
