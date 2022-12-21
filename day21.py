@@ -95,20 +95,23 @@ def solve2():
   numberToFind=numberToFind*2
 
   sample=0
+
   result0=checkSample(sample, numberToFind, deepcopy(knownVariables), deepcopy(notKnownVariables.copy()))
   if(result0==0):
     return sample
+
   sample=sample+1
   result1=checkSample(sample, numberToFind, deepcopy(knownVariables), deepcopy(notKnownVariables.copy()))
   if(result1==0):
     return sample
 
-  foundMax=0
-  foundMin=0 
   if(result1-result0>0):
     isToSwap=-1
   else:
     isToSwap=1
+
+  foundMax=0
+  foundMin=0 
 
   while(True):
     if(foundMax==0):
