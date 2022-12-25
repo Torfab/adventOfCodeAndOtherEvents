@@ -1,5 +1,7 @@
-from utilities import *
 import functools
+
+from utilities import *
+
 
 def parseArray(a):
   myArray=[]

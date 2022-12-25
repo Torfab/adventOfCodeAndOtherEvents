@@ -1,6 +1,5 @@
 from utilities import *
 
-
 day=19
 
 def comprehension(rows):

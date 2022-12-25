@@ -1,5 +1,6 @@
 from utilities import *
 
+
 def mark(position:tuple, grid:dict):
   if(grid.get(position)==None):
     grid[position]="#"

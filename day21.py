@@ -1,6 +1,6 @@
-from utilities import *
 from copy import deepcopy
 
+from utilities import *
 
 day=21
 

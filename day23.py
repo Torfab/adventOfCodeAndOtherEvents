@@ -97,5 +97,5 @@ def solve2():
     if(moves==0):
       return round
 
-# print(solve1())
-submitToday(solve2())
+print(solve1())
+print(solve2())
