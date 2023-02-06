@@ -1,4 +1,4 @@
-from utilities import *
+from utility import *
 
 day=19
 
@@ -72,7 +72,7 @@ def calculateProduction(production, resources, bluePrint, minutes, history, nope
   return result
 
 def solve1():
-  rows=getAocInput(day)
+  rows=getOldAocInput(day)
   blueprints=comprehension(rows)
 
   result=0
@@ -92,7 +92,7 @@ def buildmaxx(blueprint):
   return maxElements
 
 def solve2():
-  rows=getAocInput(day)
+  rows=getOldAocInput(day)
   blueprints=comprehension(rows[:3])
 
   result=1

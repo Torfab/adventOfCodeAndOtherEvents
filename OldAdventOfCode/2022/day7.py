@@ -1,4 +1,4 @@
-from utilities import *
+from utility import *
 
 
 def comprehension(rows):
@@ -62,14 +62,14 @@ def buildSizesInnerRecursion(fileSystem, sizes:list):
       buildSizesInnerRecursion(element, sizes)
 
 def solve1():
-  rows=getAocInput(7)
+  rows=getOldAocInput(7)
   fileSystem=comprehension(rows)
   sizes=buildSizes(fileSystem)
 
   return sum(element for element in sizes if element<=100000)
 
 def solve2():
-  rows=getAocInput(7)
+  rows=getOldAocInput(7)
   fileSystem=comprehension(rows)
   sizes=buildSizes(fileSystem)
 

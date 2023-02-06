@@ -1,4 +1,4 @@
-from utilities import *
+from utility import *
 
 day=20
 
@@ -8,7 +8,7 @@ def insertElementInList(mySequence: list, currentPosition1, currentPosition2):
   return
 
 def solve(decriptionKey, times):
-  rows=getAocInput(day)
+  rows=getOldAocInput(day)
   sequence=[]
   for idx, element in enumerate(rows):
     sequence.append(dict(originalPosition=idx, value=int(element)*decriptionKey))

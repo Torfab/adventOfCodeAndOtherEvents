@@ -1,4 +1,4 @@
-from utilities import *
+from utility import *
 
 
 def mark(position:tuple, grid:dict):
@@ -19,7 +19,7 @@ def fromXAndDistanceBuildVectorMarker(x, distance):
   return arrayOfResult
 
 def resolve(yToCheck):
-  rows=getAocInput(15)
+  rows=getOldAocInput(15)
 
   setAtIndex=set()
 
@@ -53,7 +53,7 @@ def checkIfInRange(sensorDict:dict, coordinates=(3156345,3204261)):
 
 
 def resolve2():
-  rows=getAocInput(15)
+  rows=getOldAocInput(15)
 
   sensorDict=dict()
 

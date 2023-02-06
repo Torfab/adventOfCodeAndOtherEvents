@@ -1,4 +1,4 @@
-from utilities import *
+from utility import *
 
 directions=dict(D=[-1,0], U=[1,0], R=[0,1], L=[0,-1])
 
@@ -33,7 +33,7 @@ def moveRope(rope, direction):
   return newRope
 
 def solve(knots):
-  rows= getAocInput(9)
+  rows= getOldAocInput(9)
   rope=[]
   for number in range(knots):
     rope.append([0,0])

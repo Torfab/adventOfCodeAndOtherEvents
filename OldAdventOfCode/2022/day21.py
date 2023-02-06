@@ -1,6 +1,6 @@
 from copy import deepcopy
 
-from utilities import *
+from utility import *
 
 day=21
 
@@ -78,13 +78,13 @@ def checkSample(sample, numberToFind, knownVariables, notKnownVariables):
   return knownVariables["root"]-numberToFind
 
 def solve1():
-  rows=getAocInput(day)
+  rows=getOldAocInput(day)
   knownVariables, _=comprehension(rows, "a")
 
   return int(knownVariables["root"])
 
 def solve2():
-  rows=getAocInput(day)
+  rows=getOldAocInput(day)
   knownVariables, notKnownVariables=  comprehension(rows, "b")
 
   if(isinstance(notKnownVariables["root"]["operando1"],int) or isinstance(notKnownVariables["root"]["operando1"],float)):

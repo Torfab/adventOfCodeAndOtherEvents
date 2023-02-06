@@ -1,4 +1,4 @@
-from utilities import *
+from utility import *
 
 
 day=22
@@ -224,7 +224,7 @@ def calculateResult(tile, orientation):
 def solve(forwardFunction):
   while(directionVector[0]!=(1,0)):
     rotate("R")
-  rows=getAocInput(day)
+  rows=getOldAocInput(day)
   grid, arrayOfCommands=comprehension(rows)
   currentPosition=(min(element[0] for element in grid if element[1]==1), 1)
   stamp(currentPosition, grid)

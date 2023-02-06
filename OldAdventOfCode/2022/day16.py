@@ -1,6 +1,6 @@
 from copy import deepcopy
 
-from utilities import *
+from utility import *
 
 day=16
 
@@ -74,13 +74,13 @@ def buildPath(node, path:dict, marked: list, maxMinutes, nodeDict, allPossiblePa
   return result
 
 def solve1():
-  rows=getAocInput(day)
+  rows=getOldAocInput(day)
   nodeDict=comprehensionRows(rows)
   allPossiblePaths=[]
   return buildPath(dict(name='AA', distance=0), dict(nodes=[], value=0, steps=0), [], 30, nodeDict, allPossiblePaths)
 
 def solve2():
-  rows=getAocInput(day)
+  rows=getOldAocInput(day)
   nodeDict=comprehensionRows(rows)
   allPossiblePaths=[]
   buildPath(dict(name='AA', distance=0), dict(nodes=[], value=0, steps=0), [], 26, nodeDict, allPossiblePaths)

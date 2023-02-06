@@ -1,4 +1,4 @@
-from utilities import *
+from utility import *
 
 
 def checkFullyContained(a: list,b: list):
@@ -21,7 +21,7 @@ def checkPartialContained(a: list,b: list):
   return False
 
 def solve():
-  rows=getAocInput(4)
+  rows=getOldAocInput(4)
 
   accumulatore=0
   for element in rows:
@@ -35,7 +35,7 @@ def solve():
   return accumulatore
 
 def solve2():
-  rows=getAocInput(4)
+  rows=getOldAocInput(4)
 
   accumulatore=0
   for element in rows:

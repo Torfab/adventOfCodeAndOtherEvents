@@ -1,4 +1,4 @@
-from utilities import *
+from utility import *
 
 distanceVector=[[0,1],[0,-1],[-1,0],[1,0]]
 
@@ -25,7 +25,7 @@ def comprehension(rows):
 
 
 def solve(part):
-  rows= getAocInput(12)
+  rows= getOldAocInput(12)
   rows, startingPoint, endingPoint= comprehension(rows)
 
   startingPoints=[]

@@ -1,4 +1,4 @@
-from utilities import *
+from utility import *
 
 distanceVector=[(1,0), (-1,0), (0,1), (0,-1)]
 
@@ -68,7 +68,7 @@ def printGrid(grid: dict , maxX, maxY):
 def solve(part):
   gridDict=dict()
 
-  rows=getAocInput(14)
+  rows=getOldAocInput(14)
   for element in rows:
     coordinates=element.split(" ->")
     for idx in range(len(coordinates)-1):

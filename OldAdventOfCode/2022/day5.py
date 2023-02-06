@@ -1,4 +1,4 @@
-from utilities import *
+from utility import *
 
 
 def parseRows(rows: list):
@@ -28,7 +28,7 @@ def useCrate9001(columns, quantityToMove, fromColumn, toColumn):
 
 def solve(useMachinery):
   
-  rows= getAocInput(5)
+  rows= getOldAocInput(5)
 
   columns, movements=parseRows(rows)
 

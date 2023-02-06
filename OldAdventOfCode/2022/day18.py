@@ -1,4 +1,4 @@
-from utilities import *
+from utility import *
 
 day=18
 
@@ -12,7 +12,7 @@ def comprehension(rows):
   return triplettes
 
 def solve1():
-  rows=getAocInput(day)
+  rows=getOldAocInput(day)
   triplettes=comprehension(rows)
 
   distance1=0
@@ -91,7 +91,7 @@ def buildCandidateAirPockets(border: list, triplettes: list):
   return candidatesAirPockets
 
 def solve2():
-  rows=getAocInput(day)
+  rows=getOldAocInput(day)
   triplettes=comprehension(rows)
   # Analyzing input i saw there is no negative point, and 0,0,0 is not part of the figure
   # The idea is to find a path toward (0,0,0) if there is one cube is in the exterior part

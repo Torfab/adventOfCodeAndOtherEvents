@@ -1,9 +1,9 @@
-from utilities import *
+from utility import *
 
 
 def solve(howMany):
   
-  rows= getAocInput(1)
+  rows= getOldAocInput(1)
   singleElf=0
   values=[]
 

@@ -1,8 +1,8 @@
-from utilities import *
+from utility import *
 
 
 def solve(quantity):
-  rows=getAocInput(6)
+  rows=getOldAocInput(6)
 
   for idx in range(len(rows[0])-quantity):
     mySet=set()

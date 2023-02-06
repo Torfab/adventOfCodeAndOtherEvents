@@ -1,4 +1,4 @@
-from utilities import *
+from utility import *
 
 
 def comprehension(rows):
@@ -71,7 +71,7 @@ def playARound(monkeys, part, modulo):
       monkey["items"].pop(0)
 
 def solve(days, part):
-  rows= getAocInput(11)
+  rows= getOldAocInput(11)
   monkeys=comprehension(rows)
   
   modulo=1

@@ -1,6 +1,6 @@
 from enum import Enum
 
-from utilities import *
+from utility import *
 
 
 class SceltaAvversario(Enum):
@@ -66,7 +66,7 @@ def round2(b,a):
 
 def solve1():
   
-  rows= getAocInput(2)
+  rows= getOldAocInput(2)
 
   accumulatore=0
 
@@ -81,7 +81,7 @@ def solve1():
 
 def solve2():
 
-  rows = getAocInput(2)
+  rows = getOldAocInput(2)
 
   accumulatore = 0
 

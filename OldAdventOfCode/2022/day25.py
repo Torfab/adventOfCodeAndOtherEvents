@@ -1,4 +1,4 @@
-from utilities import *
+from utility import *
 
 dictSnafuConversion={'=':-2, "-":-1, '0':0, '1':1, '2':2}
 dictDecimalConversion={2:'2', 1:'1', 0:'0', -1:'-', -2:'='}
@@ -54,7 +54,7 @@ def sumTwoSnafuNumber(a,b):
 # print(sumTwoSnafuNumber('1--20', '1-00==1-1=='))
 
 def solve():
-  rows=getAocInput(25)
+  rows=getOldAocInput(25)
   result=''
   for element in rows:
     result=sumTwoSnafuNumber(result, element)

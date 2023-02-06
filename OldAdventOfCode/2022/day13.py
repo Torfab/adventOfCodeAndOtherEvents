@@ -1,6 +1,6 @@
 import functools
 
-from utilities import *
+from utility import *
 
 
 def parseArray(a):
@@ -78,7 +78,7 @@ def rightOrder(a,b):
   return resultIfFinish
 
 def solve():
-  rows=getAocInput(13)
+  rows=getOldAocInput(13)
   result=0
 
   for idx, element in enumerate(rows):
@@ -92,7 +92,7 @@ def solve():
   return result
 
 def solve2():
-  rows=getAocInput(13)
+  rows=getOldAocInput(13)
   
   arrayOfAll=[]
 

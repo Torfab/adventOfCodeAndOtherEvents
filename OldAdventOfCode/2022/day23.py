@@ -1,4 +1,4 @@
-from utilities import *
+from utility import *
 
 day=23
 
@@ -80,7 +80,7 @@ def calculateSpacesZones(grid):
   return (x*y)-len(grid)
 
 def solve1():
-  rows= getAocInput(day)
+  rows= getOldAocInput(day)
   grid=comprehension(rows)
   for round in range(10):
     doRound(grid)
@@ -88,7 +88,7 @@ def solve1():
   return calculateSpacesZones(grid)
 
 def solve2():
-  rows= getAocInput(day)
+  rows= getOldAocInput(day)
   grid=comprehension(rows)
   round=0
   while(True):

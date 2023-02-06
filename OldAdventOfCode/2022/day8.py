@@ -1,4 +1,4 @@
-from utilities import *
+from utility import *
 
 
 def markLines(trees):
@@ -36,7 +36,7 @@ def markTrees(trees):
   markColumn(trees)
 
 def solve1():
-  rows=getAocInput(8)
+  rows=getOldAocInput(8)
 
   trees=[]
   for idx, element in enumerate(rows):
@@ -88,7 +88,7 @@ def checkScore(trees, i, j):
   return result
 
 def solve2():
-  rows=getAocInput(8)
+  rows=getOldAocInput(8)
 
   trees=[]
   for idx, element in enumerate(rows):

@@ -1,4 +1,4 @@
-from utilities import *
+from utility import *
 
 
 def rucksackValue(character):
@@ -8,7 +8,7 @@ def rucksackValue(character):
     return ord(character)-96
 
 def solve1():
-  rows= getAocInput(3)
+  rows= getOldAocInput(3)
 
   spareElements=[]
 
@@ -45,7 +45,7 @@ def solve1():
   return(accumulatore)
 
 def solve2():
-  rows= getAocInput(3)
+  rows= getOldAocInput(3)
   
   badgeElements=[]
 

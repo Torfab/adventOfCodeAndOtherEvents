@@ -1,4 +1,4 @@
-from utilities import *
+from utility import *
 
 day=17
 
@@ -79,7 +79,7 @@ def printGrid(maxHeight, grid: dict):
 
 
 def solve1():
-  rows=getAocInput(day)
+  rows=getOldAocInput(day)
   jetStream=rows[0]
   jetStreamIndex=0
 
@@ -97,7 +97,7 @@ def solve1():
   return maxHeight
 
 def solve2():
-  rows=getAocInput(day)
+  rows=getOldAocInput(day)
   jetStream=rows[0]
   jetStreamIndex=0
 

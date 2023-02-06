@@ -1,8 +1,8 @@
-from utilities import *
+from utility import *
 
 
 def solve1():
-  rows=getAocInput(10)
+  rows=getOldAocInput(10)
   stack=[]
   x=1
   idx=0
@@ -28,7 +28,7 @@ def solve1():
   return result
 
 def solve2():
-  rows=getAocInput(10)
+  rows=getOldAocInput(10)
   stack=[]
   x=1
   idx=0

@@ -1,4 +1,4 @@
-from utilities import *
+from utility import *
 
 day=24
 
@@ -81,7 +81,7 @@ def setupAndSolve(start, end, grid, maxX, maxY):
   return bfs(border, end, grid, maxX, maxY)
 
 def solve1():
-  rows=getAocInput(day)
+  rows=getOldAocInput(day)
   grid=comprehension(rows)
   # realPrint(grid)
   maxX=max(a[0] for a in grid)
@@ -91,7 +91,7 @@ def solve1():
   return result
 
 def solve2():
-  rows=getAocInput(day)
+  rows=getOldAocInput(day)
   grid=comprehension(rows)
   # realPrint(grid)
   maxX=max(a[0] for a in grid)
