@@ -26,7 +26,7 @@ def getFrequencyDictForText(sentence, pruneNotUsefulWords=True, tooManyOccurance
   for text in sentence.split(" "):
     text=text.lower()
     if(pruneNotUsefulWords):
-      if re.match("ll$|the$|a$|of$|in$|print$|def$|for$|dict$|def$|idx$|range$|return$|element$|splitted$|len$|result$|if$|rows$|solve$|append$|and$|split$|int$|else$|import$|utilities$|from$|continue$|sort$|break$|pop$|or$|while$|elif$|float$", text):
+      if re.match("at$|is$|but$|by$|ll$|the$|a$|of$|in$|print$|def$|for$|dict$|def$|idx$|range$|return$|element$|splitted$|len$|result$|if$|rows$|solve$|append$|and$|split$|int$|else$|import$|utilities$|from$|continue$|sort$|break$|pop$|or$|while$|elif$|float$", text):
         continue
     val = tmpDict.get(text, 0)
     tmpDict[text] = min(val + 1, tooManyOccurance)
@@ -57,8 +57,8 @@ def getTextFromFiles(path, custom=False):
   realText=''
   if(not custom):
     for day in range(1,25):
-      file=path+"day"+str(day)+".py"
-      text = open(os.path.dirname(__file__)+"/"+file, "r")
+      filez=path+"day"+str(day)+".py"
+      text = open(os.path.dirname(__file__)+"/"+filez, "r")
       data=text.read()
       text.close()
       realText = realText+data
@@ -73,4 +73,5 @@ def getTextFromFiles(path, custom=False):
 # generate(getFrequencyDictForText(getTextFromFiles("../")),["santa.jpg", "elephants.jpg", "tree.png"])
 # getFrequencyDictForText(getTextFromFiles("allChallenges.txt", True), True, 20)
 # generate(getFrequencyDictForText(getTextFromFiles("allChallenges.txt", True), True, 20),["santa.jpg", "elephants.jpg", "tree.png"])
-generate(getFrequencyDictForText(getTextFromFiles("natale.txt", True), True, 30),["snowFlake.jpg"], True, False)
+# generate(getFrequencyDictForText(getTextFromFiles("natale.txt", True), True, 30),["snowFlake.jpg"], True, False)
+generate(getFrequencyDictForText(getTextFromFiles("ransom.txt", True), True, 20),["skull.png"], True, True)
