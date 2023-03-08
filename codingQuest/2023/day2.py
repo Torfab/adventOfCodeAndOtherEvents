@@ -5,7 +5,7 @@ from utility import *
 
 ### Ho quindi creato due funzioni per convertire e deconvertire i decimali in binario, nello specifico la funzione di conversione binaria viene paddata per avere sempre 16 bit espliciti
 
-def fromIntegerToBinary(integer):
+def fromIntegerToBinary(integer, padding=16):
   result=[]
   integer=int(integer)
 
@@ -13,7 +13,7 @@ def fromIntegerToBinary(integer):
     result.append(str(integer%2))
     integer=integer//2
 
-  while(len(result)<16):
+  while(len(result)<padding):
     result.append('0')
   result.reverse()
   return ''.join(result)

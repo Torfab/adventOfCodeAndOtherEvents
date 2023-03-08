@@ -1,20 +1,27 @@
 from utility import *
 
-rows= openFile("input.txt")
+def solve():
 
-results={}
+  rows= openFile("input.txt")
 
-for row in rows:
-  splitted=row.split(" ")
+  results={}
 
-  if(results.get(splitted[2])==None):
-    results[splitted[2]]=int(splitted[1])
-  else:
-    results[splitted[2]]=results[splitted[2]]+int(splitted[1])
+  for row in rows:
+    splitted=row.split(" ")
 
-risultato=1
-for element in results.values():
-  risultato=risultato*(element%100)
-  
-  
-print(risultato)
+    value=int(splitted[1])
+    category=splitted[2]
+
+    # Creo una entry nel dizionario se non esiste, altrimenti aggiungo il valore corrente a quello passato
+    if(results.get(category)==None):
+      results[category]=int(value)
+    else:
+      results[category]=results[category]+int(value)
+
+  risultato=1
+  for element in results.values():
+    risultato=risultato*(element%100)
+    
+  print(risultato)
+
+solve()
