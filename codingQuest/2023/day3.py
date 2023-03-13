@@ -1,10 +1,5 @@
 import requests
 
-response = requests.get("https://codingquest.io/api/puzzledata?puzzle=20")
-rows = response.text.splitlines()
-
-# print(rows)
-
 dictPlayers={0: "x", 1: "o"}
 
 # def stampaGrid(grid):
@@ -62,6 +57,11 @@ def playGame(moves):
   return 0
 
 def solve():
+  response = requests.get("https://codingquest.io/api/puzzledata?puzzle=20")
+  rows = response.text.splitlines()
+
+  # print(rows)
+
   dictResults={0:0, 'o':0, 'x':0}
 
   for row in rows:
