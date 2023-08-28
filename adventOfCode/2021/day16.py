@@ -23,12 +23,13 @@ def parseRows(rows):
     grid.append(newRow)
   return grid
 
-def comprehendPacket(packet, deep, toElaborate):
+def comprehendPacket(packet, deep, toElaborate, parentTypeID):
   cursor=0
   lenpacket=len(packet)
   elaborated=0
   versionNumberSum=0
   state="VERSION"
+  tempResult=[]
 
   while(cursor<=lenpacket-8):
     if(state=="VERSION"):
@@ -53,6 +54,8 @@ def comprehendPacket(packet, deep, toElaborate):
         values.append(packet[cursor:cursor+4])
         cursor=cursor+4
         singleValue=''.join(values)
+        tempResult.append(fromBinaryToInteger(singleValue))
+
       else:
         lengthID=packet[cursor]
         cursor=cursor+1
@@ -61,43 +64,86 @@ def comprehendPacket(packet, deep, toElaborate):
           totalLength=packet[cursor:cursor+15]
           cursor=cursor+15
           intTotalLength=fromBinaryToInteger(totalLength)
-          # print("dentro", intTotalLength)
-          versionNumberSum=versionNumberSum+comprehendPacket(packet[cursor:cursor+intTotalLength], deep+1, -1)
-          # print("fuori", cursor, intTotalLength)
+          newSumVersion, _, newResult=comprehendPacket(packet[cursor:cursor+intTotalLength], deep+1, -1, typeID)
+          tempResult.append(newResult)
+          versionNumberSum=versionNumberSum+newSumVersion
           cursor=cursor+intTotalLength
-          # print(cursor)
 
         if(lengthID=='1'):
           totalPackets=packet[cursor:cursor+11]
           cursor=cursor+11
           intTotalPackets=fromBinaryToInteger(totalPackets)
-          newSumVersion, newcursor=comprehendPacket(packet[cursor:], deep+1, intTotalPackets)
+          newSumVersion, newcursor, newResult=comprehendPacket(packet[cursor:], deep+1, intTotalPackets, typeID)
+          tempResult.append(newResult)
           versionNumberSum=versionNumberSum+newSumVersion
           cursor=cursor+newcursor
           
       state="VERSION"
 
 
-    print("version", version, "Type ID", typeID, "values")
+    
     elaborated=elaborated+1
     if(elaborated==toElaborate):
-      return versionNumberSum, cursor
+
+      result=findResult(parentTypeID, tempResult)
+
+      return versionNumberSum, cursor, result
       
+  result=findResult(parentTypeID, tempResult)
 
-  return versionNumberSum
+  return versionNumberSum, cursor, result
 
+def findResult(parentTypeID, tempResult):
+  if(parentTypeID == '000'):
+    result=sum(tempResult)
 
+  elif(parentTypeID == '001'):
+    result=1
+    for num in tempResult:
+      result=result*num
 
-def solve():
+  elif(parentTypeID == '010'):
+    result=min(tempResult)
+
+  elif(parentTypeID == '011'):
+    result=max(tempResult)
+
+  elif(parentTypeID == '100'):
+    result=tempResult[0]
+
+  elif(parentTypeID == '101'):
+    if(tempResult[0]>tempResult[1]):
+      result=1
+    else:
+      result=0
+  
+  elif(parentTypeID == '110'):
+    if(tempResult[0]<tempResult[1]):
+      result=1
+    else:
+      result=0
+
+  elif(parentTypeID == '111'):
+    if(tempResult[0]==tempResult[1]):
+      result=1
+    else:
+      result=0
+  return result
+
+def solve(part):
   rows=getOldAocInput(16)
   code=rows[0]
   code=fromHexToBinaryLine(code)
 
-  # print(code)
+  result = comprehendPacket(code, 0, -1, '100')
+  
+  if(part=="a"):
+    return result[0]
+  if(part=="b"):
+    return result[2]
 
-  return comprehendPacket(code, 0, -1)
-
- 
 
 
-print(solve())
+
+print(solve("a"))
+print(solve("b"))
