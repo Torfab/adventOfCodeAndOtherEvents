@@ -20,7 +20,6 @@ def parseRows(rows):
 
 def solve(iterations):
   rows=getOldAocInput(14)
-  # rows=getOldAocInput(-1)
 
   lineDict, polymerDict=parseRows(rows)
   

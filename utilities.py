@@ -67,3 +67,11 @@ def getAocInput(day, year=date.today().year):
 
 def submitToday(answer):
   return aocd.submit(answer)
+
+def fromBinaryToInteger(binary):
+  result=0
+  power=0
+  for element in reversed(range(len(binary))):
+    result=result+int(binary[element])*(2**power)
+    power=power+1
+  return result
