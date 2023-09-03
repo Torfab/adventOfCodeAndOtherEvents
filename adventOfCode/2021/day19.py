@@ -76,7 +76,7 @@ def rotate(arrayOfCoords, rotation):
 # -z,  x, -y   5,0,4
 #  z, -x, -y   2,3,4
 
-def solve():
+def solve(part):
   rows=getOldAocInput(19)
   scanners=parseRows(rows)
 
@@ -113,13 +113,17 @@ def solve():
         scanners.pop(j)
         j=0
       j=j+1
-  print(len(scanners[0]))
+      
+  if(part=="a"):
+    return len(scanners[0])
 
   maxManhattan=0
   # print(keysOfAllScanners)
   for i in range(len(keysOfAllScanners)):
     for j in range(i+1, len(keysOfAllScanners)):
       maxManhattan=max(distanceBetweenTwoTriplettes(keysOfAllScanners[i], keysOfAllScanners[j]), maxManhattan)
-  print(maxManhattan)
+  if(part=="b"):
+    return maxManhattan
 
-print(solve()) 
+print(solve("a")) 
+print(solve("b")) 

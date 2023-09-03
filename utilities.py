@@ -78,3 +78,6 @@ def fromBinaryToInteger(binary):
     result=result+int(binary[element])*(2**power)
     power=power+1
   return result
+
+def fromIntegerToBinary(integer):
+  return int(str(integer),2)
