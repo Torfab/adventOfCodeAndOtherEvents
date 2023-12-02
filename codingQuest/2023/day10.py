@@ -33,7 +33,7 @@ def solve():
           continue
       visited[key]=score
       border.append((score, key))
-      
+
   return visited["EAR"]
 
 print(solve())
