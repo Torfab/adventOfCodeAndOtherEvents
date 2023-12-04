@@ -10,8 +10,8 @@ def solveA(row):
     estrazioni=singleRound.split(", ")
 
     for singleEstrazione in estrazioni:
-      singleEstrazioneParsed=singleEstrazione.split(" ")
-      if (aLimits[singleEstrazioneParsed[1]]<int(singleEstrazioneParsed[0])):
+      parsedSingleEstrazione=singleEstrazione.split(" ")
+      if (aLimits[parsedSingleEstrazione[1]]<int(parsedSingleEstrazione[0])):
         isValidGame=False
   
   if(isValidGame):
@@ -26,9 +26,9 @@ def solveB(row):
   for singleRound in rounds:
     estrazioni=singleRound.split(", ")
     for singleEstrazione in estrazioni:
-      singleEstrazioneParsed=singleEstrazione.split(" ")
-      if (minCubes[singleEstrazioneParsed[1]]<int(singleEstrazioneParsed[0])):
-        minCubes[singleEstrazioneParsed[1]]=int(singleEstrazioneParsed[0])
+      parsedSingleEstrazione=singleEstrazione.split(" ")
+      if (minCubes[parsedSingleEstrazione[1]]<int(parsedSingleEstrazione[0])):
+        minCubes[parsedSingleEstrazione[1]]=int(parsedSingleEstrazione[0])
   
   return minCubes["red"]*minCubes["blue"]*minCubes["green"]
 
