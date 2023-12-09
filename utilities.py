@@ -1,5 +1,5 @@
 from datetime import date
-
+import math
 import aocd
 
 #rotations in 3d, 3,4,5 means -x,-y,-z
@@ -81,3 +81,29 @@ def fromBinaryToInteger(binary):
 
 def fromIntegerToBinary(integer):
   return int(str(integer),2)
+
+def arrayDividends(M, itself=True):
+  if(M==2):
+    return []
+  if(M==3):
+    return []
+  i=1
+  temporaryM=M
+  collection=[]
+  maxFactor= math.floor(math.sqrt(M))
+  while(temporaryM%2==0):
+    collection.append(2)
+    temporaryM=temporaryM//2
+  while(temporaryM!=1):
+    i+=2
+    if(temporaryM%i==0):
+      collection.append(i)
+      temporaryM=temporaryM//i
+      i=1
+    if(i>maxFactor):
+      if(M!=temporaryM):
+        collection.append(temporaryM)
+      break
+  if(temporaryM==M and itself):
+    collection.append(M)
+  return collection
