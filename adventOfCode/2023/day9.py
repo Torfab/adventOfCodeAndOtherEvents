@@ -2,7 +2,11 @@ from utility import *
 
 def elaborateRow(row, part):
   theRows=[]
-  rowSplitted=[int(x) for x in row.split(" ")]
+  if(part=="a"):
+    rowSplitted=[int(x) for x in row.split(" ")]
+  if(part=="b"):
+    rowSplitted=[int(x) for x in row.split(" ")]
+    rowSplitted.reverse()
   theRows.append(rowSplitted)
   count=0
   while(True):
@@ -14,14 +18,9 @@ def elaborateRow(row, part):
     if (all(value == 0 for value in newRow)):
       break
   valueToInsert=0
-  if(part=="a"):
-    for idx in reversed(range(len(theRows))):
-      valueToInsert=theRows[idx][-1]+valueToInsert
-      theRows[idx].append(valueToInsert)
-  if(part=="b"):
-    for idx in reversed(range(len(theRows))):
-      valueToInsert=theRows[idx][0]-valueToInsert
-      theRows[idx].insert(0,valueToInsert)
+  for idx in reversed(range(len(theRows))):
+    valueToInsert=theRows[idx][-1]+valueToInsert
+    theRows[idx].append(valueToInsert)
   return valueToInsert
 
 
