@@ -40,6 +40,9 @@ def fromDistanceBuildSetOfDirections(distance):
     y=y-1
   return resultSet
 
+def fromDistanceBuildListOfDirections(distance):
+  return list(fromDistanceBuildSetOfDirections(distance))
+
 def distanceBetweenTwoTuples(a,b):
   return abs(a[0]-b[0])+abs(a[1]-b[1])
 
