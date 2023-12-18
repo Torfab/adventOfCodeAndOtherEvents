@@ -5,14 +5,18 @@ import aocd
 #rotations in 3d, 3,4,5 means -x,-y,-z
 rotations=[(0,1,2), (3,4,2), (1,3,2), (4,0,2), (3,1,5), (0,4,5), (1,0,5), (4,3,5),(0,5,1), (3,2,1), (5,3,1), (2,0,1), (3,5,4), (0,2,4), (5,0,4), (2,3,4), (2,1,3), (5,4,3), (1,5,3), (4,2,3), (5,1,0), (2,4,0), (1,2,0), (4,5,0)]
 
-
-def openFile(path):
-  
-  file = open(path, "r")
-  rows = []
-  for line in file:
-    rows.append(line.rstrip("\r\n"))
+def openFile(path):  
+  with open(path, 'r') as f:
+    rows = f.read().split()
   return rows
+
+# Deprecated
+# def openFile(path):
+#   file = open(path, "r")
+#   rows = []
+#   for line in file:
+#     rows.append(line.rstrip("\r\n"))
+#   return rows
 
 def sumTupleValueByValue(a,b):
   return a[0]+b[0], a[1]+b[1]
