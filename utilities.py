@@ -111,3 +111,44 @@ def arrayDividends(M, itself=True):
   if(temporaryM==M and itself):
     collection.append(M)
   return collection
+
+
+
+def cycleDetection(arrayToCheck, subSequenceMin):
+
+  def findLastIndex(arr, element):
+    idx=-1
+    for i in range(len(arr)):
+      if(arr[i]==element):
+        idx=i
+    return idx
+  
+  subSequence=[]
+  arrayResults=[]
+  startSubSequence=None
+  for element in arrayToCheck:
+    if(startSubSequence==None):
+      idx=findLastIndex(arrayResults, element)
+      if(idx!=-1):
+        startSubSequence=idx
+        subSequence.append(element)
+    else:
+      if(element==arrayResults[startSubSequence] and len(subSequence)>subSequenceMin):
+        #idx start, and sequenece
+        return startSubSequence, subSequence
+      
+
+      if(element==arrayResults[idx+1]):
+        subSequence.append(element)
+        idx=idx+1
+
+      else:
+        subSequence=[]
+        idx=findLastIndex(arrayResults, element)
+        if(idx!=-1):
+          startSubSequence=idx
+          subSequence.append(element)
+
+    arrayResults.append(element)
+  print(arrayResults)
+  return None, None
