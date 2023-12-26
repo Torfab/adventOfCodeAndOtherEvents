@@ -152,3 +152,6 @@ def cycleDetection(arrayToCheck, subSequenceMin):
     arrayResults.append(element)
   print(arrayResults)
   return None, None
+
+def maxGrid(grid):
+  return max(a[0] for a in grid), max(a[1] for a in grid)
