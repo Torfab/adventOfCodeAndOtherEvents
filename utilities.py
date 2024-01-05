@@ -73,15 +73,10 @@ def submitToday(answer):
   return aocd.submit(answer)
 
 def fromBinaryToInteger(binary):
-  result=0
-  power=0
-  for element in reversed(range(len(binary))):
-    result=result+int(binary[element])*(2**power)
-    power=power+1
-  return result
+  return int(str(binary),2)
 
 def fromIntegerToBinary(integer):
-  return int(str(integer),2)
+  return bin(integer)[2:]
 
 def fromHexToInteger(num):
   return int(num, 16)
@@ -155,3 +150,20 @@ def cycleDetection(arrayToCheck, subSequenceMin):
 
 def maxGrid(grid):
   return max(a[0] for a in grid), max(a[1] for a in grid)
+
+def buildGridWithDots(rows):
+  grid={}
+  for y in range(len(rows)):
+    for x in range(len(rows[y])):
+      if(rows[y][x]!="."):
+        grid[(x,y)]=rows[y][x]
+  limits=maxGrid(grid)
+  return grid, limits[0], limits[1]
+
+def stampaGrid(grid, maxX=None, maxY=None):
+  if(maxX==None or maxY==None):
+    maxX, maxY= maxGrid(grid)
+  for y in range(maxY+1):
+    for x in range(maxX+1):
+      print(grid.get((x,y), '.'), end="")
+    print()

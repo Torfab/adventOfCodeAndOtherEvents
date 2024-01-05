@@ -24,9 +24,6 @@ def isParity(binary):
 def solve():
   rows= openFile("input.txt")
 
-  # Filtr monolinea sfruttando la list comprehension di python
-  # filteredElements=[fromIntegerToBinary(x) for x in rows if isParity(fromIntegerToBinary(x))]
-
   filteredElements=[]
 
   for row in rows:
