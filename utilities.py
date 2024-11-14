@@ -15,6 +15,9 @@ def openFile(path):
 def sumTupleValueByValue(a,b):
   return a[0]+b[0], a[1]+b[1]
 
+def sumTupleValueByValueWithLoop(a, b, maxX, maxY):
+  return (a[0]+b[0])%(maxX+1), (a[1]+b[1])%(maxY+1)
+
 def sumTriplettesValueByValue(a,b):
   return a[0]+b[0], a[1]+b[1], a[2]+b[2]
 
