@@ -44,6 +44,14 @@ def fromDistanceBuildSetOfDirections(distance):
 def fromDistanceBuildListOfDirections(distance):
   return list(fromDistanceBuildSetOfDirections(distance))
 
+def fromDistanceBuildSetOfRadialDirections(distance):
+  resultSet=set()
+  for x in range(-distance, distance+1):
+    for y in range(-distance, distance+1):
+      resultSet.add((x,y))
+  resultSet.remove((0,0))
+  return resultSet
+
 def distanceBetweenTwoTuples(a,b):
   return abs(a[0]-b[0])+abs(a[1]-b[1])
 
