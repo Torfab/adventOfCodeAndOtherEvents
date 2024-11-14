@@ -58,7 +58,7 @@ def solve2():
       shout=shout+str(n[0])
     shout=int(shout)
     shoutCollection[shout]=shoutCollection.get(shout,0)+1
-    if(shoutCollection[shout]==2048):
+    if(shoutCollection[shout]==2024):
       return (i+1)*shout
     
     i=i+1
