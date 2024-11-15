@@ -162,14 +162,17 @@ def cycleDetection(arrayToCheck, subSequenceMin):
 def maxGrid(grid):
   return max(a[0] for a in grid), max(a[1] for a in grid)
 
-def buildGridWithDots(rows):
+def buildGrid(rows, neutralElement):
   grid={}
   for y in range(len(rows)):
     for x in range(len(rows[y])):
-      if(rows[y][x]!="."):
+      if(rows[y][x]!=neutralElement):
         grid[(x,y)]=rows[y][x]
   limits=maxGrid(grid)
   return grid, limits[0], limits[1]
+
+def buildGridWithDots(rows):
+  return buildGrid(rows, ".")
 
 def stampaGrid(grid, maxX=None, maxY=None):
   if(maxX==None or maxY==None):
