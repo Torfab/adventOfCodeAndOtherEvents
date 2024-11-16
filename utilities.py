@@ -162,7 +162,7 @@ def cycleDetection(arrayToCheck, subSequenceMin):
 def maxGrid(grid):
   return max(a[0] for a in grid), max(a[1] for a in grid)
 
-def buildGrid(rows, neutralElement):
+def buildGrid(rows, neutralElement="."):
   grid={}
   for y in range(len(rows)):
     for x in range(len(rows[y])):
@@ -174,10 +174,21 @@ def buildGrid(rows, neutralElement):
 def buildGridWithDots(rows):
   return buildGrid(rows, ".")
 
-def stampaGrid(grid, maxX=None, maxY=None):
+def stampaGrid(grid, maxX=None, maxY=None, void="."):
   if(maxX==None or maxY==None):
     maxX, maxY= maxGrid(grid)
   for y in range(maxY+1):
     for x in range(maxX+1):
-      print(grid.get((x,y), '.'), end="")
+      print(grid.get((x,y), void), end="")
     print()
+
+def homeMadePermutations(elements, subPermutation, totalLength, result):
+  if(totalLength==len(subPermutation)):
+    result.append(subPermutation)
+    return
+  
+  for element in elements:
+    if elements[element]>0:
+      elements[element]=elements[element]-1
+      homeMadePermutations(elements, subPermutation+element, totalLength, result)
+      elements[element]=elements[element]+1
