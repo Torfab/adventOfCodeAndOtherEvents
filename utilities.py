@@ -182,6 +182,18 @@ def stampaGrid(grid, maxX=None, maxY=None, void="."):
       print(grid.get((x,y), void), end="")
     print()
 
+def stampaGridFile(grid, maxX=None, maxY=None, void=".", toss=False):
+  if toss:
+    open("output.txt", "w").close()
+  f=open("output.txt", "a")
+  if(maxX==None or maxY==None):
+    maxX, maxY= maxGrid(grid)
+  for y in range(maxY+1):
+    for x in range(maxX+1):
+      f.write(grid.get((x,y), void))
+    f.write("\n")
+  f.write("\n")
+
 def homeMadePermutations(elements, subPermutation, totalLength, result):
   if(totalLength==len(subPermutation)):
     result.append(subPermutation)
