@@ -5,6 +5,13 @@ import aocd
 #rotations in 3d, 3,4,5 means -x,-y,-z
 rotations=[(0,1,2), (3,4,2), (1,3,2), (4,0,2), (3,1,5), (0,4,5), (1,0,5), (4,3,5),(0,5,1), (3,2,1), (5,3,1), (2,0,1), (3,5,4), (0,2,4), (5,0,4), (2,3,4), (2,1,3), (5,4,3), (1,5,3), (4,2,3), (5,1,0), (2,4,0), (1,2,0), (4,5,0)]
 
+simplifiedSin={0:0, 90:-1, 180:0, 270:1}
+simplifiedCos={0:1, 90:0, 180:-1, 270:0}
+
+def simpleRotation(x,y,degree):
+  return x*simplifiedCos[degree]-y*simplifiedSin[degree], x*simplifiedSin[degree]+y*simplifiedCos[degree]
+
+
 def openFile(path):
   file = open(path, "r")
   rows = []

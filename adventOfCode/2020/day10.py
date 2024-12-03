@@ -1,4 +1,4 @@
-from utilityz import getOldAocInput
+from utility import getOldAocInput
 
 def buildAdaptersChain(rows):
   return [int(x) for x in rows]
