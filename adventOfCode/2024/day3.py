@@ -1,7 +1,7 @@
 from utility import *
 
 
-def solve():
+def solve(checkDoable):
   rows=getOldAocInput(3)
 
   state=""
@@ -33,7 +33,7 @@ def solve():
         state="n("
       elif(element==")" and state=="n("):
         state=""
-        doState=False
+        doState=False or checkDoable
       elif(doState):
         if(element=="m" and state==""):
           state="m"
@@ -62,4 +62,5 @@ def solve():
           state=""
   return ris
 
-print(solve())
+print(solve(True))
+print(solve(False))
