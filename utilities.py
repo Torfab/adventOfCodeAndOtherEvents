@@ -77,10 +77,15 @@ def sumArrayValueByValueSeparated(a, b, c):
 
 def thingInCommonArray(a,b):
   for elementA in a:
-    for elementB in b:
-      if(elementA==elementB):
-        return True
+    if elementA in b:
+      return True
   return False
+
+def thingInCommonArrayWithValue(a,b, ignore=None):
+  for elementA in [x for x in a if a!=ignore]:
+    if elementA in b:
+      return True, elementA
+  return False, None
 
 def getAocInput(day, year=date.today().year):
   if(day==-1):

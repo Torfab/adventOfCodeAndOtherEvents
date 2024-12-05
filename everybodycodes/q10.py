@@ -18,7 +18,7 @@ def solve():
     verticalLine=[]
     for idx in range(0,maxY+1):
       verticalLine.append(grid[(element[0], idx)])
-    result=result+thingInCommonArray2(horizontalLine,verticalLine,".")[1]
+    result=result+thingInCommonArrayWithValue(horizontalLine,verticalLine,".")[1]
 
   return result
 
@@ -42,7 +42,7 @@ def findEasyElements(rune, elementsMissing):
         continue
       verticalLine.append(rune[(element[0], idx)])
     
-    foundCommonElement=thingInCommonArray2(horizontalLine,verticalLine,".")[1]
+    foundCommonElement=thingInCommonArrayWithValue(horizontalLine,verticalLine,".")[1]
     if(foundCommonElement!=None):
       result[element]=foundCommonElement
       rune[element]=foundCommonElement
@@ -81,8 +81,8 @@ def fixGrid(rune, result):
 
       
       if countUnknown==0:
-        if(thingInCommonArray2(horizontalLine,verticalLine,".")[1]!=None):
-          result[broken]=thingInCommonArray2(horizontalLine,verticalLine,".")[1]
+        if(thingInCommonArrayWithValue(horizontalLine,verticalLine,".")[1]!=None):
+          result[broken]=thingInCommonArrayWithValue(horizontalLine,verticalLine,".")[1]
           fixedSomething=True
         else:
           isUnfixable=True
@@ -161,7 +161,7 @@ def evaluateRune(rune):
     verticalLine=[]
     for idx in range(0,maxY+1):
       verticalLine.append(rune[(element[0], idx)])
-    result=result+thingInCommonArray2(horizontalLine,verticalLine,".")[1]
+    result=result+thingInCommonArrayWithValue(horizontalLine,verticalLine,".")[1]
 
   resultNumber=0
 
