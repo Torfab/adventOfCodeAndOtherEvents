@@ -216,3 +216,10 @@ def homeMadePermutations(elements, subPermutation, totalLength, result):
       elements[element]=elements[element]-1
       homeMadePermutations(elements, subPermutation+element, totalLength, result)
       elements[element]=elements[element]+1
+
+def evaluateTime(f):
+  import time
+  t0=time.time()
+  f()
+  t1=time.time()
+  return t1-t0
