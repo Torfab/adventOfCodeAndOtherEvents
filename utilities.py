@@ -72,9 +72,6 @@ def sumArrayValueByValue(a, b):
 def multiplyArrayByValue(array, value):
   return [value*a for a in array]
 
-def sumArrayValueByValueSeparated(a, b, c):
-  return a+c[0], b+c[0]
-
 def thingInCommonArray(a,b):
   for elementA in a:
     if elementA in b:
@@ -216,6 +213,17 @@ def homeMadePermutations(elements, subPermutation, totalLength, result):
       elements[element]=elements[element]-1
       homeMadePermutations(elements, subPermutation+element, totalLength, result)
       elements[element]=elements[element]+1
+
+def mergeRanges(ranges):
+  sortedRanges= sorted(ranges, key=lambda x: x[0])
+  finalList=[]
+  for current in sortedRanges:
+    if not finalList or finalList[-1][1]<current[0]:
+      finalList.append(current)
+    else:
+      finalList[-1] = (finalList[-1][0], max(finalList[-1][1], current[1]))
+  
+  return finalList
 
 def evaluateTime(f):
   import time
