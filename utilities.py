@@ -225,6 +225,10 @@ def mergeRanges(ranges):
   
   return finalList
 
+def concatenateIntegers(a,b):
+  num_digits = math.floor(math.log10(b)) + 1
+  return a * (10 ** num_digits) + b
+
 def evaluateTime(f):
   import time
   t0=time.time()
