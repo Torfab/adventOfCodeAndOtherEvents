@@ -88,23 +88,24 @@ def solve(part):
       separatedFieldsTickets[i].append(ticket[i])
 
   elementIdx=0
-  elementToConsider=[]
-  while(len(elementToConsider)!=6):
+  departureFieldsIdx=[]
+  while(len(departureFieldsIdx)!=6):
     elementIdx=(elementIdx+1)%len(notFound)
+    column=notFound[elementIdx]
     notValid=set()
-    for fieldValue in separatedFieldsTickets[notFound[elementIdx]]:
+    for fieldValue in separatedFieldsTickets[column]:
       for k,fieldRange in ticketDictToDestroy.items():
         if fieldValue not in fieldRange:
           notValid.add(k)
-    if(len(notValid)==len(ticketDictToDestroy)-1):
-      k=set(ticketDictToDestroy.keys()).difference(notValid).pop()
-      found[notFound[elementIdx]]=k
+    if(len(ticketDictToDestroy)-len(notValid)==1):
+      columnName=set(ticketDictToDestroy.keys()).difference(notValid).pop()
+      ticketDictToDestroy.pop(columnName)
+      found[column]=columnName
       notFound.pop(elementIdx)
-      ticketDictToDestroy.pop(k)
-      elementToConsider=[k for k, v in found.items() if "departure" in v]
+      departureFieldsIdx=[k for k, v in found.items() if "departure" in v]
 
   ris=1
-  for idx in elementToConsider:
+  for idx in departureFieldsIdx:
     ris=ris*myTicket[idx]
   return ris
 
@@ -113,9 +114,4 @@ def solve(part):
 print(solve("a"))
 print(solve("b"))
 
-# def timeElapse():
-#   print(solve())
-#   print(solveB())
-
-# print(evaluateTime(timeElapse))
 
