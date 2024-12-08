@@ -234,4 +234,6 @@ def evaluateTime(f):
   t0=time.time()
   f()
   t1=time.time()
+  print("time elapsed:", round(t1-t0,3), "s")
+  print("time elapsed:", round((t1-t0)*1000, 3), "ms")
   return t1-t0
