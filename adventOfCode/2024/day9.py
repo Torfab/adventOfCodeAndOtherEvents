@@ -43,7 +43,6 @@ def compact(arrayFull, arrayFree):
   return arrayFull
 
 def compactB(stateArray):
-  # stampaSingleArray(stateArray)
   elementToNavigate=reversed([k for k in stateArray if k[2]==False])
   for element in elementToNavigate:
     quantity=element[0]
@@ -120,6 +119,6 @@ def solveB():
 
 def timeElapse():
   print(solveA())
-  # print(solveB())
+  print(solveB())
 
 evaluateTime(timeElapse)
