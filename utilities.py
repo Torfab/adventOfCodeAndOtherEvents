@@ -171,6 +171,9 @@ def cycleDetection(arrayToCheck, subSequenceMin):
 def maxGrid(grid):
   return max(a[0] for a in grid), max(a[1] for a in grid)
 
+def minGrid(grid):
+  return min(a[0] for a in grid), min(a[1] for a in grid)
+
 def buildGrid(rows, neutralElement="."):
   grid={}
   for y in range(len(rows)):
