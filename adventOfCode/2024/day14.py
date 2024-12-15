@@ -1,5 +1,6 @@
 from utility import *
 
+directions=fromDistanceBuildSetOfDirections(1)
 limits=(100, 102)
 # limits=(10,6)
 
@@ -93,8 +94,51 @@ def solveB():
   stampaRobot(robots)
 
   return frame
+
+def calculateMaxAdjacent(robots):
+  grid=set(k["position"] for k in robots)
+  visited=set()
+  maxAdj=0
+  for element in grid:
+    if element in visited:
+      continue
+    border=[element]
+    quantity=0
+    while(len(border)>0):
+      currentPosition=border.pop()
+      if currentPosition in visited:
+        continue
+      visited.add(currentPosition)
+      quantity=quantity+1
+      for d in directions:
+        tentative=sumTupleValueByValueWithLoop(currentPosition, d, limits[0], limits[1])
+        if(tentative in grid):
+          border.append(tentative)
+    if(quantity>maxAdj):
+      maxAdj=quantity
+  return maxAdj
+
+#Have solve C only to have a programming solve instead of pen and paper solve
+def solveC():
+  rows=getOldAocInput(14)
+  robots=parseRows(rows)
+  #The things will be repeated every maxX and maxY cause teleport so we've to check just a lot of times
+  maxAdj=0
+  maxIdx=0
+  for i in range(1,limits[0]*limits[1]+1):
+    for robot  in robots:
+      currentPosition=robot["position"]
+      velocity=robot["velocity"]
+      nextPosition=sumTupleValueByValueWithLoop(currentPosition, (velocity), limits[0], limits[1])
+      robot["position"]=nextPosition
+    adj=calculateMaxAdjacent(robots)
+    if adj>maxAdj:
+      maxAdj=adj
+      maxIdx=i
+  return maxIdx
+
 print(solve())
-print(solveB())
+print(solveC())
 
 # def timeElapse():
 #   print(solve())

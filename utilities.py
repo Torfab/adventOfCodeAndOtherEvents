@@ -234,6 +234,9 @@ def numDigit(a):
 def concatenateIntegers(a,b):
   return a * (10 ** numDigit(b)) + b
 
+def modInverse(a,modH):
+  return pow(a,-1,modH)
+
 def evaluateTime(f):
   import time
   t0=time.time()
