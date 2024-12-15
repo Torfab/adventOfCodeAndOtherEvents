@@ -20,7 +20,8 @@ def parseRows(rows):
   return arrayOfGames
 
 def evaluate(element):
-  #Ammetto che me la sono andata a riguardare la regola di Cramer
+  # Ammetto che me la sono andata a riguardare la regola di Cramer
+  # Da riguardare anche la Gaussian Elimination che male non è
   determinante=element["A"][0]*element["B"][1]-element["A"][1]*element["B"][0]
   detX=element["target"][0]*element["B"][1]-element["target"][1]*element["B"][0]
   detY=element["A"][0]*element["target"][1]-element["A"][1]*element["target"][0]
