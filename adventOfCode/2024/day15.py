@@ -1,4 +1,4 @@
-from utilityz import *
+from utility import *
 
 directions={"<": (-1,0), "^": (0,-1), ">":(1,0), "v":(0,1)}
 
