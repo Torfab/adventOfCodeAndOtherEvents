@@ -1,20 +1,23 @@
-from utility import *
+from utilityz import *
 
 register={0:0, 1:1, 2:2, 3:3, 4:0, 5:0, 6:0}
-cinque=[x for x in fromIntegerToBinary(5)]
-sei=[x for x in fromIntegerToBinary(6)]
+
+
+# This problem want you to look at the input, in my input i always used those following two numbers
+# So i decided to save them in the convenient data structure i use to work with.
+cinque=["1","0","1"]
+sei=["1","1","0"]
 
 def parseRows(row):
   register[4]=int(row[0].split(":")[1])
   register[5]=int(row[1].split(":")[1])
   register[6]=int(row[2].split(":")[1])
   
-  program=[int(x) for x in row[4].split(":")[1].split(",")]
+  program= [int(x) for x in row[4].split(":")[1].split(",")]
   return program
   
-def evaluate(operand, literalValue, instructionPointer):
+def evaluate(operand, literalValue, ris):
   comboValue=register[literalValue]
-  ris=""
   if(operand==0):
     register[4]=register[4]//(2**comboValue)
   elif(operand==1):
@@ -23,28 +26,31 @@ def evaluate(operand, literalValue, instructionPointer):
     register[5]=comboValue%8
   elif(operand==3):
     if(register[4]!=0):
-      return literalValue, ris
+      return literalValue
   elif(operand==4):
     register[5]=register[5]^register[6]
   elif(operand==5):
-    ris=ris+str(comboValue%8)+","
+    ris.append(str(comboValue%8))
   elif(operand==6):
     register[5]=register[4]//(2**comboValue)
   elif(operand==7):
     register[6]=register[4]//(2**comboValue)
-  return instructionPointer+2, ris
+
   
 def solve():
   rows=getOldAocInput(17)
   program=parseRows(rows)
   instructionPointer=0
-  ris=""
+  ris=[]
   while(instructionPointer<len(program)-1):
     operandNumber=program[instructionPointer]
     value=program[instructionPointer+1]
-    instructionPointer, newRis=evaluate(operandNumber,value, instructionPointer)
-    ris=ris+newRis
-  return ris[:-1]
+    evaluated=evaluate(operandNumber,value, ris)
+    if evaluated!=None:
+      instructionPointer=evaluated
+    else:
+      instructionPointer=instructionPointer+2
+  return ",".join(ris) 
 
 def myXor(result, secondOperando):
   firstOperando=[0,0,0]
@@ -64,25 +70,11 @@ def myPad(c):
     c.insert(0,'0')
   return c
 
-def esplodoC(c):
-  candidates=[]
-  current=[]
-  if "x" not in c:
-    return [c]
-  for i in range(len(c)):
-    if c[i]!="x":
-      current.append(c[i])
-    else:
-      candidates=candidates+esplodoC(current+['0']+(c[i+1:] or []))
-      candidates=candidates+esplodoC(current+['1']+(c[i+1:] or []))
-      break
-  return candidates
-
 def myShift(testA, b):
   shiftNumber=fromBinaryToInteger("".join(b))
   if(shiftNumber==0):
-    return 0,[testA]
-  return shiftNumber, esplodoC(testA[-shiftNumber-3:-shiftNumber])
+    return 0,testA
+  return shiftNumber, testA[-shiftNumber-3:-shiftNumber]
   
 
 def solveB():
@@ -91,33 +83,33 @@ def solveB():
   testA=[["0","0","0","0","0","0","0"]]
   for element in reversed(program):
     candidati=[]
-    binaryToFind=myPad([x for x in fromIntegerToBinary(element)])
+    binaryToFind=myPad([x for x in fromIntegerToBinary(int(element))])
     
-    for testino in testA:
+    for possibility in testA:
 
       for i in range(8):
-        testTurno=testino+myPad([x for x in fromIntegerToBinary(i)])
+        testTurno=possibility+myPad([x for x in fromIntegerToBinary(i)])
         b=testTurno
         b=myXor(b, cinque)
-        shiftNumber, c=myShift(testTurno, b) #espandi a tutti i possibili C
-        for possibleC in c:
-          possibleB=myXor(b,possibleC)
-          possibleB=myXor(possibleB, sei)
-          if(possibleB==binaryToFind):
-            candidati.append((testTurno, shiftNumber, possibleC))
-      #valuta la C meno costosa
+        shiftNumber, c=myShift(testTurno, b)
+        possibleB=myXor(b,c)
+        possibleB=myXor(possibleB, sei)
+        if(possibleB==binaryToFind):
+          candidati.append((testTurno, shiftNumber, c))
     finalRes=[]
     for candidato in candidati:
       tentativeTest=candidato[0].copy()
-      if candidato[1]!=0:
-        tentativeTest[-candidato[1]-3]=candidato[2][0]
-        tentativeTest[-candidato[1]-2]=candidato[2][1]
-        tentativeTest[-candidato[1]-1]=candidato[2][2]
-      tentativeRisultato=[x if x!="x" else "0" for x in tentativeTest]
-      tentativeRisultato=int("".join(tentativeRisultato))
+      shiftNumber=candidato[1]
+      possibleC=candidato[2]
+      if shiftNumber!=0:
+        tentativeTest[-shiftNumber-3]=possibleC[0]
+        tentativeTest[-shiftNumber-2]=possibleC[1]
+        tentativeTest[-shiftNumber-1]=possibleC[2]
+      tentativeRisultato=int("".join([x if x!="x" else "0" for x in tentativeTest]))
       finalRes.append((tentativeRisultato, tentativeTest))
+
+    finalRes= sorted(finalRes, key=lambda x:x[0])
     testA=[res[1] for res in finalRes]
-  finalRes= sorted(finalRes, key=lambda x:x[0])
   return fromBinaryToInteger("".join([x if x!="x" else "0" for x in testA[0]]))
 
 print(solve())
