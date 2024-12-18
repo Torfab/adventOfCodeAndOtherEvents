@@ -183,7 +183,6 @@ def buildGrid(rows, neutralElement="."):
   limits=maxGrid(grid)
   return grid, limits[0], limits[1]
 
-
 # mi ritorna un set di coordinate invalide per gli spostamenti che circonda una griglia
 def cageGridWithWalls(maxLimits, minLimits=(0,0)):
   solution=set()
@@ -194,9 +193,6 @@ def cageGridWithWalls(maxLimits, minLimits=(0,0)):
     solution.add((minLimits[0]-1, y))
     solution.add((maxLimits[0]+1, y))
   return solution
-
-def buildGridWithDots(rows):
-  return buildGrid(rows, ".")
 
 def stampaGrid(grid, maxX=None, maxY=None, void="."):
   if(maxX==None or maxY==None):

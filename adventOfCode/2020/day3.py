@@ -4,7 +4,7 @@ from utility import *
 def solve(part):
   
   rows= getOldAocInput(3)
-  grid, maxX, maxY=buildGridWithDots(rows)
+  grid, maxX, maxY=buildGrid(rows)
   
 
   if(part=="a"):

@@ -19,7 +19,7 @@ def isBorder(coords, grid):
 
 def solve(borderFunction):
   rows=openFile("raw.txt")
-  grid, maxX, maxY=buildGridWithDots(rows)
+  grid, maxX, maxY=buildGrid(rows)
   for key in grid:
     grid[key]=1
   counter=len(grid)
