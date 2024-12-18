@@ -1,4 +1,4 @@
-from utilityz import *
+from utility import *
 
 firstInternal="c0a8"
 firstWifi="0A00"

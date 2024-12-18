@@ -1,4 +1,4 @@
-from utilityz import *
+from utility import *
 
 register={0:0, 1:1, 2:2, 3:3, 4:0, 5:0, 6:0}
 

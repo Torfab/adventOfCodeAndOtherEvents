@@ -1,4 +1,4 @@
-from utilityz import *
+from utility import *
 
 directions=fromDistanceBuildSetOfDirections(1)
 

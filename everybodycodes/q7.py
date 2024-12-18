@@ -1,4 +1,4 @@
-from utilityz import *
+from utility import *
 
 def homeMadePermutations(elements, subPermutation, totalLength, result):
   if(totalLength==len(subPermutation)):

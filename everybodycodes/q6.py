@@ -1,4 +1,4 @@
-from utilityz import *
+from utility import *
 
 def insertInTable(label, depth, lookupTree, alreadyIn):
   item={"depth":depth}

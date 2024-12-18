@@ -1,4 +1,4 @@
-from utilityz import *
+from utility import *
 
 def parseRows(rows):
   collectionOfTermites={}

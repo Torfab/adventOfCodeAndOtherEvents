@@ -1,4 +1,4 @@
-from utilityz import *
+from utility import *
 
 itemsToAdd=["Seat", "Meals", "Luggage", "Fee", "Tax"]
 itemsToRemove=["Discount", "Rebate"]
