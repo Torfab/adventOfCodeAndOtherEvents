@@ -73,10 +73,9 @@ def myPad(c):
 def myShift(testA, b):
   shiftNumber=fromBinaryToInteger("".join(b))
   if(shiftNumber==0):
-    return 0,testA
-  return shiftNumber, testA[-shiftNumber-3:-shiftNumber]
+    return testA
+  return testA[-shiftNumber-3:-shiftNumber]
   
-
 def solveB():
   rows=getOldAocInput(17)
   program=parseRows(rows)
@@ -84,33 +83,30 @@ def solveB():
   for element in reversed(program):
     candidati=[]
     binaryToFind=myPad([x for x in fromIntegerToBinary(int(element))])
-    
     for possibility in testA:
-
       for i in range(8):
         testTurno=possibility+myPad([x for x in fromIntegerToBinary(i)])
         b=testTurno
         b=myXor(b, cinque)
-        shiftNumber, c=myShift(testTurno, b)
-        possibleB=myXor(b,c)
-        possibleB=myXor(possibleB, sei)
-        if(possibleB==binaryToFind):
-          candidati.append((testTurno, shiftNumber, c))
+        c=myShift(testTurno, b)
+        b=myXor(b,c)
+        b=myXor(b, sei)
+        if(b==binaryToFind):
+          candidati.append(testTurno)
     finalRes=[]
-    for candidato in candidati:
-      tentativeTest=candidato[0].copy()
-      shiftNumber=candidato[1]
-      possibleC=candidato[2]
-      if shiftNumber!=0:
-        tentativeTest[-shiftNumber-3]=possibleC[0]
-        tentativeTest[-shiftNumber-2]=possibleC[1]
-        tentativeTest[-shiftNumber-1]=possibleC[2]
-      tentativeRisultato=int("".join([x if x!="x" else "0" for x in tentativeTest]))
-      finalRes.append((tentativeRisultato, tentativeTest))
-
-    finalRes= sorted(finalRes, key=lambda x:x[0])
-    testA=[res[1] for res in finalRes]
+    testA=candidati
+  for candidato in candidati:
+    tentativeRisultato=int("".join([x if x!="x" else "0" for x in candidato]))
+    finalRes.append((tentativeRisultato, candidato))
+  finalRes= sorted(finalRes, key=lambda x:x[0])
   return fromBinaryToInteger("".join([x if x!="x" else "0" for x in testA[0]]))
+
 
 print(solve())
 print(solveB())
+
+# def timeElapse():
+#   print(solve())
+#   print(solveB())
+
+# evaluateTime(timeElapse)
