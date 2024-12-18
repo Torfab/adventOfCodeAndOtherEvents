@@ -1,12 +1,8 @@
 from utility import *
 
 register={0:0, 1:1, 2:2, 3:3, 4:0, 5:0, 6:0}
-
-operations={0:"adv", 1:"bxl", 2:"bst", 3:"jnz", 4:"bxc", 5:"out", 6:"bdv", 7:"cdv"}
-ris=""
-
-cinque=["1","0","1"]
-sei=["1","1","0"]
+cinque=[x for x in fromIntegerToBinary(5)]
+sei=[x for x in fromIntegerToBinary(6)]
 
 def parseRows(row):
   register[4]=int(row[0].split(":")[1])
@@ -16,44 +12,38 @@ def parseRows(row):
   program=[int(x) for x in row[4].split(":")[1].split(",")]
   return program
   
-def evaluate(operandNumber, literalValue, instructionPointer):
-  operand=operations[operandNumber]
+def evaluate(operand, literalValue, instructionPointer):
   comboValue=register[literalValue]
-  if(operand=="adv"):
+  ris=""
+  if(operand==0):
     register[4]=register[4]//(2**comboValue)
-    return instructionPointer+2
-  if(operand=="bxl"):
+  elif(operand==1):
     register[5]=literalValue^register[5]
-    return instructionPointer+2
-  if(operand=="bst"):
+  elif(operand==2):
     register[5]=comboValue%8
-    return instructionPointer+2
-  if(operand=="jnz"):
-    if(register[4]==0):
-      return instructionPointer+2
-    return literalValue
-  if(operand=="bxc"):
+  elif(operand==3):
+    if(register[4]!=0):
+      return literalValue, ris
+  elif(operand==4):
     register[5]=register[5]^register[6]
-    return instructionPointer+2
-  if(operand=="out"):
-    global ris
+  elif(operand==5):
     ris=ris+str(comboValue%8)+","
-    return instructionPointer+2
-  if(operand=="bdv"):
+  elif(operand==6):
     register[5]=register[4]//(2**comboValue)
-    return instructionPointer+2
-  if(operand=="cdv"):
+  elif(operand==7):
     register[6]=register[4]//(2**comboValue)
-    return instructionPointer+2
+  return instructionPointer+2, ris
   
 def solve():
   rows=getOldAocInput(17)
   program=parseRows(rows)
   instructionPointer=0
+  ris=""
   while(instructionPointer<len(program)-1):
     operandNumber=program[instructionPointer]
     value=program[instructionPointer+1]
-    instructionPointer=evaluate(operandNumber,value, instructionPointer)
+    instructionPointer, newRis=evaluate(operandNumber,value, instructionPointer)
+    ris=ris+newRis
   return ris[:-1]
 
 def myXor(result, secondOperando):
