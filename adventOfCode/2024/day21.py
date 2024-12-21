@@ -1,9 +1,14 @@
-from utilityz import *
+from utility import *
+import functools
 
 directions=fromDistanceBuildSetOfDirections(1)
 
 direcitonsToLetters={(1,0):"E", (-1,0):"W", (0,1):"S", (0,-1):"N"}
 lettersToDirection={"E":(1,0), "W":(-1,0), "S":(0,1), "N":(0,-1)}
+
+reachDirectionPad={}
+directionPad={}
+
 
 def buildHistory(history):
   historyDict={}
@@ -35,67 +40,65 @@ def buildReachKeys(grid):
         border.append((tentative, history+[direcitonsToLetters[d]]))
   return reachKeyboard
 
-def findRobot1Presses(arrayOfButtonToPress, reachDirectionPad):
+@functools.cache
+def findRobotPresses(arrayOfButtonToPress, keyboardNumber):
 
   finalRis=[]
-  for tentativeButtonToPress in arrayOfButtonToPress:
+  if keyboardNumber==1:
+    for tentativeButtonToPress in arrayOfButtonToPress:
 
+      currentPoint="A"
+      ris=0
+      for element, value in tentativeButtonToPress:
+        ris=ris+reachDirectionPad[currentPoint][element][0]+value
+        currentPoint=element  
+      finalRis.append(ris+reachDirectionPad[currentPoint]["A"][0])
+    return min(finalRis)
 
-    currentPoint="A"
-    ris=0
-    for element, value in tentativeButtonToPress:
-      ris=ris+reachDirectionPad[currentPoint][element][0]+value
-      currentPoint=element  
-    finalRis.append(ris+reachDirectionPad[currentPoint]["A"][0])
-  return min(finalRis)
-
-def findRobot2Presses(arrayOfButtonToPress, reachDirectionPad, directionPad):
-
-  finalRis=[]
   for tentativeButtonToPress in arrayOfButtonToPress:
     currentPoint="A"
     ris=0
 
     for element, value in tentativeButtonToPress:
-      ris=ris+findRobot1Presses(arrayValid(reachDirectionPad[currentPoint][element][1], currentPoint, directionPad), reachDirectionPad)+value
+      ris=ris+findRobotPresses(arrayValid(reachDirectionPad[currentPoint][element][1], currentPoint, directionPad), keyboardNumber-1)+value
       currentPoint=element  
+    finalRis.append(ris+findRobotPresses(arrayValid(reachDirectionPad[currentPoint]["A"][1], currentPoint, directionPad), keyboardNumber-1))
 
-    finalRis.append(ris+findRobot1Presses(arrayValid(reachDirectionPad[currentPoint]["A"][1], currentPoint, directionPad), reachDirectionPad))
   return min(finalRis)
 
-def arrayValid(buttonToPress, current, keyboardGrid):
+def arrayValid(buttonToPress, current, gridToCheck):
   if(len(buttonToPress)==2):
     arrayOfButtonToPress=[]
-    startPoint=next(k for k,v in keyboardGrid.items() if v==current)
-    currentPoint=startPoint
-    valid=True
-    for e,v in buttonToPress.items():
-      for _ in range(v):
-        tentative=sumTupleValueByValue(currentPoint, lettersToDirection[e])
-        currentPoint=tentative
-      if(tentative not in keyboardGrid):
-        valid=False
-    if valid:
-      arrayOfButtonToPress.append(list(buttonToPress.items()))
-    
-    currentPoint=startPoint
-    valid=True
-    for e,v in reversed(buttonToPress.items()):
-      for _ in range(v):
-        tentative=sumTupleValueByValue(currentPoint, lettersToDirection[e])
-      if(tentative not in keyboardGrid):
-        valid=False
-      currentPoint=tentative
-    if valid:
-      arrayOfButtonToPress.append(list(reversed(buttonToPress.items())))
-  else:
-    arrayOfButtonToPress=[list(buttonToPress.items())]
-  return arrayOfButtonToPress
+    startPoint=next(k for k,v in gridToCheck.items() if v==current)
+    possibleRoutes=[]
+    possibleRoutes.append(buttonToPress.items())
+    possibleRoutes.append(list(reversed(buttonToPress.items())))
+    for possibility in possibleRoutes:
+      currentPoint=startPoint
+      valid=True
+      for e,v in possibility:
+        for _ in range(v):
+          tentative=sumTupleValueByValue(currentPoint, lettersToDirection[e])
+          currentPoint=tentative
+        if(tentative not in gridToCheck):
+          valid=False
+      if valid:
+        arrayOfButtonToPress.append(tuple(possibility))
 
-def solve():
+  else:
+    arrayOfButtonToPress=[tuple(buttonToPress.items())]
+  return tuple(arrayOfButtonToPress)
+
+def solve(part):
+  if(part=="a"):
+    numKeyboard=2
+  if(part=="b"):
+    numKeyboard=25
   rows=getOldAocInput(21)
   keyboardGrid, _, _=buildGrid(["789", "456", "123", ".0A"])
   reachKeyboard=buildReachKeys(keyboardGrid)
+  global directionPad
+  global reachDirectionPad
   directionPad, _, _=buildGrid([".NA", "WSE"])
   reachDirectionPad=buildReachKeys(directionPad)
   ris=0
@@ -103,13 +106,16 @@ def solve():
   for row in rows:
     singleRowRis=0
     for element in row:
-
-      buttonToPressKeyboard=reachKeyboard[current][element][1]
-      tempRis=findRobot2Presses(arrayValid(buttonToPressKeyboard, current, keyboardGrid), reachDirectionPad, directionPad)+1
+      singleRowRis=singleRowRis+findRobotPresses(arrayValid(reachKeyboard[current][element][1], current, keyboardGrid), numKeyboard)+1
       current=element
-      singleRowRis=singleRowRis+tempRis
-    print(singleRowRis)
     ris=ris+singleRowRis*int(row[:3])
   return ris
 
-print(solve())
+print(solve("a"))
+print(solve("b"))
+
+# def timeElapse():
+#   print(solve("a"))
+#   print(solve("b"))
+
+# print(evaluateTime(timeElapse))
