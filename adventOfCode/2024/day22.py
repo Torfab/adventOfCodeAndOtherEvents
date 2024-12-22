@@ -37,11 +37,14 @@ def solveB():
 
       secret=secret*2048^secret
       secret=secret%16777216
+
       arrayOfSubResult.append(secret%10-oldLastDigit)
       oldLastDigit=secret%10
     sequence=tuple(arrayOfSubResult)
-    singleSequencesToBanana[tuple(arrayOfSubResult)]=oldLastDigit
+    singleSequencesToBanana[sequence]=oldLastDigit
     singlePossibleSequence.add(sequence)
+
+
     for _ in range(1996):
       secret=secret*64^secret
       secret=secret%16777216
@@ -59,8 +62,9 @@ def solveB():
       if sequence not in singlePossibleSequence:
         singleSequencesToBanana[sequence]=oldLastDigit
         singlePossibleSequence.add(sequence)
-    possibleSequences=possibleSequences.union(singlePossibleSequence)
+        possibleSequences.add(sequence)
     arrayOfSequencesToBanana.append(singleSequencesToBanana)
+
   maxRis=0
   for sequence in possibleSequences:
     tempRis=0
@@ -69,7 +73,7 @@ def solveB():
     maxRis=max(tempRis, maxRis)
   return maxRis
 
-print(solveB())
+print(solve())
 print(solveB())
 
 # def timeElapse():
