@@ -254,6 +254,25 @@ def concatenateIntegers(a,b):
 def modInverse(a,modH):
   return pow(a,-1,modH)
 
+#Cricca Graph Subgraph 
+#BronKerbosh trova la cricca massimale più grande, quindi il sottografo completamente connesso piu grande
+def bronKerbosh(cricca, tentatives, excludes, graph, maxCricca):
+  if len(tentatives)==0 and len(excludes)==0:
+    if len(cricca)> len(maxCricca[0]):
+      maxCricca[0]=cricca
+    return  
+  
+  thingsToCheck=[]
+  if len(tentatives)>0:
+    pivotVertex=next(iter(tentatives))
+    thingsToCheck=tentatives.difference(graph[pivotVertex])
+
+  for t in thingsToCheck:
+    bronKerbosh(cricca.union({t}), tentatives.intersection(graph[t]), excludes.intersection(graph[t]), graph, maxCricca)
+    tentatives.remove(t)
+    excludes.add(t)
+
+
 def evaluateTime(f):
   import time
   t0=time.time()
