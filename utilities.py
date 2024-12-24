@@ -262,6 +262,7 @@ def bronKerbosh(cricca, tentatives, excludes, graph, maxCricca):
       maxCricca[0]=cricca
     return  
   
+  #the pivot improve by far, in my problems about one magnitude
   thingsToCheck=[]
   if len(tentatives)>0:
     pivotVertex=next(iter(tentatives))
