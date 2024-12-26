@@ -1,4 +1,4 @@
-from utilityz import *
+from utility import *
 
 operations={
   "+": lambda x,y: x+y,
@@ -36,8 +36,6 @@ def weirdPrecedenceSolveRow(row):
     cursor=cursor+2
   return str(firstOperand)
 
-
-
 def evaluateRow(row, precedenceFunction):
   lastIdxStart=row.find("(")
   while(lastIdxStart!=-1):
@@ -51,7 +49,7 @@ def evaluateRow(row, precedenceFunction):
   return int(precedenceFunction(row))
 
 def solve(part):
-  rows=getOldAocInput(6)
+  rows=getOldAocInput(18)
   if part=="a":
     precedenceFunction=plainSolveRow
   if part=="b":
@@ -62,13 +60,12 @@ def solve(part):
   return ris
 
 
-# print(solve("a"))
-# print(solve("b"))
-# print(solveB())
+print(solve("a"))
+print(solve("b"))
 
-def timeElapse():
-  print(solve("a"))
-  print(solve("b"))
+# def timeElapse():
+#   print(solve("a"))
+#   print(solve("b"))
 
-print(evaluateTime(timeElapse))
+# print(evaluateTime(timeElapse))
 
