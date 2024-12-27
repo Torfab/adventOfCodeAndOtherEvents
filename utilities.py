@@ -211,6 +211,17 @@ def stampaGrid(grid, maxX=None, maxY=None, void="."):
       print(grid.get((x,y), void), end="")
     print()
 
+def grid90Rotation(grid, boundaries=None):
+  if boundaries==None:
+    boundaries=maxGrid(grid)
+  rotatedGrid={}
+  for k, v in grid.items():
+    newX=k[1]
+    newY=boundaries[0]-k[0]
+    rotatedGrid[(newX, newY)]=v
+    
+  return rotatedGrid
+
 def stampaGridFile(grid, maxX=None, maxY=None, void=".", toss=False):
   if toss:
     open("output.txt", "w").close()
