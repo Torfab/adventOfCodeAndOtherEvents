@@ -211,16 +211,21 @@ def stampaGrid(grid, maxX=None, maxY=None, void="."):
       print(grid.get((x,y), void), end="")
     print()
 
-def grid90Rotation(grid, boundaries=None):
+def rotateGrid90(grid, boundaries=None):
   if boundaries==None:
     boundaries=maxGrid(grid)
   rotatedGrid={}
   for k, v in grid.items():
-    newX=k[1]
-    newY=boundaries[0]-k[0]
+    newX=boundaries[1]-k[1]
+    newY=k[0]
     rotatedGrid[(newX, newY)]=v
-    
+
   return rotatedGrid
+
+def flipGrid(grid, boundaries=None):
+  if boundaries==None:
+    boundaries=maxGrid(grid)
+  return {(boundaries[0]-k[0], k[1]):v for k,v in grid.items()}
 
 def stampaGridFile(grid, maxX=None, maxY=None, void=".", toss=False):
   if toss:
@@ -233,6 +238,35 @@ def stampaGridFile(grid, maxX=None, maxY=None, void=".", toss=False):
       f.write(grid.get((x,y), void))
     f.write("\n")
   f.write("\n")
+
+def removeRowsAndColumnsFromGrid(grid, rowsToRemove=[], columnsToRemove=[]):
+  rowsToRemove=sorted(rowsToRemove)
+  columnsToRemove=sorted(columnsToRemove)
+
+  rowsShift={}
+  columnShift={}
+  maxCol, maxRow=maxGrid(grid)
+  shift=0
+  for rowIdx in range(maxRow+1):
+    if rowIdx in rowsToRemove:
+      shift=shift+1
+    rowsShift[rowIdx]=rowIdx-shift
+
+  shift=0
+  for colIdx in range(maxCol+1):
+    if colIdx in columnsToRemove:
+      shift=shift+1
+    columnShift[colIdx]=colIdx-shift
+
+  newGrid={}
+  for k,value in grid.items():
+    if k[0] in columnsToRemove or k[1] in rowsToRemove:
+      continue
+    
+    newGrid[(columnShift[k[0]], rowsShift[k[1]])]= value
+
+  return newGrid
+  
 
 def homeMadePermutations(elements, subPermutation, totalLength, result):
   if(totalLength==len(subPermutation)):
