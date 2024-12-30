@@ -216,7 +216,7 @@ def stampaGrid(data, minBound=None, maxBound=None, void="."):
   if(maxBound==None):
     maxBound=maxGrid(data)
   for y in range(minBound[1], maxBound[1]+1):
-    for x in range(minBound[0], maxBound[1]+1):
+    for x in range(minBound[0], maxBound[0]+1):
       print(getValue(x,y), end="")
     print()
 
