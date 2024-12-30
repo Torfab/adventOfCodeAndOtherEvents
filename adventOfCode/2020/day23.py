@@ -1,47 +1,59 @@
-from utilityz import *
-
-
+from utility import *
 
 def parseRows(rows):
-  return [int(x) for x in rows[0]]
+  row=rows[0]
+  fastDict={}
+  for idx in range(len(row)-1):
+    fastDict[int(row[idx])]=int(row[idx+1])
 
-def doATurn(cups: list):
-  print("valuto", cups)
-  first=cups.pop(1)
-  second=cups.pop(1)
-  third=cups.pop(1)
-  current=cups[0]
-  destination=current-1
-  while(destination not in cups):
-    if(destination==0):
-      destination=9
-    else:
-      destination=destination-1
-  toPut=cups.index(destination)+1
-  cups.insert(toPut, third)
-  cups.insert(toPut, second)
-  cups.insert(toPut, first)
-  return cups[1:]+cups[:1]
+  return fastDict, int(row[-1]), int(row[0])
 
-
-
-def solve():
+def solve(part):
   rows=getOldAocInput(23)
-  cups=parseRows(rows)
+  cups, lastElement, firstElement=parseRows(rows)
 
-  for _ in range(100):
-    cups=doATurn(cups)
+  if part=="a":
+    numElements=max(cups.keys())
+    numIterations=100
+    finalElement=lastElement
 
-  idResult=cups.index(1)
-  result=cups[idResult+1:]+cups[:idResult]
-  print("final", result)
-  return "".join([str(x) for x in result])
+  if part=="b":
+    cups[lastElement]=10
+    numElements=1_000_000
+    numIterations=10_000_000
+    finalElement=numElements
 
-print(solve())
-# print(solveB())
+  for i in range(10, numElements+1):
+    cups[i]=i+1
+  cups[finalElement]=firstElement
 
-# def timeElapse():
-#   print(solve())
-#   print(solveB())
+  currentElement=firstElement
 
-# print(evaluateTime(timeElapse))
+  for i in range(numIterations):
+    firstElement=cups[currentElement]
+    secondElement=cups[firstElement]
+    thirdElement=cups[secondElement]
+    destination=(currentElement-2)%numElements+1
+    while(destination==firstElement or destination==secondElement or destination==thirdElement):
+      destination=(destination-2)%numElements+1
+    # Aggancio l'elemento attuale con il primo elemento non preso
+    cups[currentElement]=cups[thirdElement]
+    #Aggancio l'ultimo elemento all'elemento successivo a quello preso
+    cups[thirdElement]=cups[destination]
+    #Aggancio la destinazione al primo elementro preso
+    cups[destination]=firstElement
+
+    #cambio l'elemento attuale per il prossimo turno
+    currentElement=cups[currentElement]
+  if part=="a":
+    ris=""
+    currentElement=cups[1]
+    while(currentElement!=1):
+      ris=ris+str(currentElement)
+      currentElement=cups[currentElement]
+    return ris
+  if part=="b":
+    return cups[1]*cups[cups[1]]
+
+print(solve("a"))
+print(solve("b"))
