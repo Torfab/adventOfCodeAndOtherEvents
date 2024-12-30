@@ -203,12 +203,21 @@ def cageGridWithWalls(maxLimits, minLimits=(0,0)):
     solution.add((maxLimits[0]+1, y))
   return solution
 
-def stampaGrid(grid, maxX=None, maxY=None, void="."):
-  if(maxX==None or maxY==None):
-    maxX, maxY= maxGrid(grid)
-  for y in range(maxY+1):
-    for x in range(maxX+1):
-      print(grid.get((x,y), void), end="")
+def stampaGrid(data, minBound=None, maxBound=None, void="."):
+  if isinstance(data, dict):  
+      def getValue(x, y):
+          return data.get((x, y), void)  
+  elif isinstance(data, (set, list)):  
+      points=set(data)  
+      def getValue(x, y):
+          return "#" if (x, y) in points else void
+  if(minBound==None):
+    minBound=minGrid(data)
+  if(maxBound==None):
+    maxBound=maxGrid(data)
+  for y in range(minBound[1], maxBound[1]+1):
+    for x in range(minBound[0], maxBound[1]+1):
+      print(getValue(x,y), end="")
     print()
 
 def rotateGrid90(grid, boundaries=None):
