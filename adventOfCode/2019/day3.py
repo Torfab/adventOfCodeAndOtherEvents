@@ -1,4 +1,4 @@
-from utilityz import *
+from utility import *
 
 directions={"U":(0,-1), "D":(0,1), "R":(1,0), "L":(-1,0)}
 
@@ -52,9 +52,3 @@ def solve(part):
 
 print(solve("a"))
 print(solve("b"))
-
-# def timeElapse():
-#   print(solve())
-#   print(solveB())
-
-# print(evaluateTime(timeElapse))
