@@ -1,3 +1,7 @@
+
+def parseIntCode(rows):
+  return [int(x) for x in rows[0].split(",")]
+
 def leadString(num, length=4, padder="0"):
   num=str(num)
   lenNum=len(num)
@@ -10,7 +14,7 @@ def paramValue(value, parMode, commands):
   if parMode==0:
     return commands[value]
 
-def runSingleCommand(commands, cursor, outputs, input=None,):
+def runSingleCommand(commands, cursor, outputs, theInput=None):
   instruction=commands[cursor]
   parMode=None
   if instruction>99:
@@ -32,7 +36,7 @@ def runSingleCommand(commands, cursor, outputs, input=None,):
     commands[commands[cursor+3]]=paramValue(commands[cursor+1], parMode[0], commands)*paramValue(commands[cursor+2], parMode[1], commands)
     return cursor+4
   elif instruction==3:
-    commands[commands[cursor+1]]=int(input)
+    commands[commands[cursor+1]]=theInput
     return cursor+2
   elif instruction==4:
     # if(commands[cursor+2]==99):
@@ -80,9 +84,20 @@ def runSingleCommand(commands, cursor, outputs, input=None,):
     print("operation not recognized")
   return cursor+1
 
-def runCommands(commands, input=None):
-  cursor=0
+def runCommands(commands, inputs=None, cursor=0, pauseMode=False):
+  if isinstance(inputs, int):
+    inputs=[inputs]
   outputs=[]
+  inputCursor=0
+  theInput=None
   while(commands[cursor]!=99):
-    cursor=runSingleCommand(commands, cursor, outputs, input)
-  return commands, outputs
+    if commands[cursor]==3:
+      theInput=inputs[inputCursor]
+      inputCursor=inputCursor+1
+    if commands[cursor]==4 and pauseMode:
+      cursor=runSingleCommand(commands, cursor, outputs, theInput)
+      if commands[cursor]==99:
+        return commands, outputs, cursor, True
+      return commands, outputs, cursor, False
+    cursor=runSingleCommand(commands, cursor, outputs, theInput)
+  return commands, outputs, cursor, True

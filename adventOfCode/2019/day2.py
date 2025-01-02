@@ -18,7 +18,7 @@ def solve(part):
         newCommands=commands.copy()
         newCommands[1]=noun
         newCommands[2]=verb
-        newCommands, _=runCommands(newCommands)
+        newCommands, _, _, _=runCommands(newCommands)
         if newCommands[0]==19690720:
           return 100*noun+verb
     return "non ho trovato niente"

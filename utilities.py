@@ -278,6 +278,20 @@ def removeRowsAndColumnsFromGrid(grid, rowsToRemove=[], columnsToRemove=[]):
   
 
 def homeMadePermutations(elements, subPermutation, totalLength, result):
+  """
+  Build all permutations and put them in parameter result
+
+  Parameters
+  __________
+  elements: dict
+    elements are in the form {"a":3, "b":5}
+  subPermutation: str
+    subPermutation is in the form of empty string at start
+  totalLength: int
+    length of the permutations
+  result: list
+    list of all permutations it found
+  """
   if(totalLength==len(subPermutation)):
     result.append(subPermutation)
     return
