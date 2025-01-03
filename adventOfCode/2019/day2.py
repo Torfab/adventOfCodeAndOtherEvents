@@ -6,7 +6,7 @@ def parseRows(rows):
 
 def solve(part):
   rows=getOldAocInput(2)
-  commands=parseRows(rows)
+  commands=parseIntCode(rows)
   if part=="a":
     commands[1]=12
     commands[2]=2
