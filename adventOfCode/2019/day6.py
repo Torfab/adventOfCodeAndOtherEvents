@@ -1,4 +1,4 @@
-from utilityz import *
+from utility import *
 
 def buildElementInOrbitalDict(root, deep, passiveConnectionDict):
   newPlanet={}

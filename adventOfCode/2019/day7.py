@@ -13,7 +13,8 @@ def solve():
     for i in range(5):
       permutationCommands=commands.copy()
       inputs=[int(permutation[i]), currentOutput]
-      _, outputs, _, _=runCommands(permutationCommands, inputs)
+      result=runCommands(permutationCommands, inputs)
+      outputs=result[1]
       currentOutput=outputs[-1]
     possibleResults.append(outputs[-1])
   return max(possibleResults)
@@ -31,12 +32,20 @@ def solveB():
     permutationCursor=[0 for _ in range(5)]
     for i in range(5):
       inputs=[int(permutation[i]), currentOutput]
-      permutationCommands[i], outputs, permutationCursor[i], finish=runCommands(permutationCommands[i], inputs, permutationCursor[i], True)
+      result=runCommands(permutationCommands[i], inputs, permutationCursor[i], True)
+      permutationCommands[i]=result[0]
+      outputs=result[1]
+      permutationCursor[i]=result[2]
+      finish=result[3]
       currentOutput=outputs[-1]
     while(finish==False):
       for i in range(5):
         inputs=[currentOutput]
-        permutationCommands[i], outputs, permutationCursor[i], finish=runCommands(permutationCommands[i], inputs, permutationCursor[i], True)
+        result=runCommands(permutationCommands[i], inputs, permutationCursor[i], True)
+        permutationCommands[i]=result[0]
+        outputs=result[1]
+        permutationCursor[i]=result[2]
+        finish=result[3]
         if finish==False or len(outputs)>0:
           currentOutput=outputs[-1]
     possibleResults.append(currentOutput)

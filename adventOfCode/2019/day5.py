@@ -8,10 +8,12 @@ def solve(part):
   rows=getOldAocInput(5)
   commands=parseRows(rows)
   if part=="a":
-    commands, outputs, _, _=runCommands(commands, 1)
+    result=runCommands(commands, 1)
+    outputs=result[1]
     return outputs[-1]
   if part=="b":
-    commands, outputs, _, _=runCommands(commands, 5)
+    result=runCommands(commands, 5)
+    outputs=result[1]
     return outputs[-1]
 
 print(solve("a"))
