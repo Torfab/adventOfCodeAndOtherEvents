@@ -138,7 +138,15 @@ def arrayDividends(M, itself=True):
     collection.append(M)
   return collection
 
-
+def gcd(a, b):
+    if a == 0:
+        return abs(b)
+    if b == 0:
+        return abs(a)
+    a, b = abs(a), abs(b)
+    while b != 0:
+        a, b = b, a % b
+    return a
 
 def cycleDetection(arrayToCheck, subSequenceMin):
 
