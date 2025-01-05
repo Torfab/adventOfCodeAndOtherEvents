@@ -148,6 +148,9 @@ def gcd(a, b):
         a, b = b, a % b
     return a
 
+def lcm(a,b):
+  return abs(a*b)//gcd(a,b)
+
 def cycleDetection(arrayToCheck, subSequenceMin):
 
   def findLastIndex(arr, element):
