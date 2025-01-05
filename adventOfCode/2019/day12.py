@@ -63,40 +63,30 @@ def solveB():
   rows=getOldAocInput(12)
   orbitals=parseRows(rows)
 
-  xTuple=(orbitals[0]["x"], orbitals[0]["speedX"], orbitals[1]["x"], orbitals[1]["speedX"], orbitals[2]["x"], orbitals[2]["speedX"], orbitals[3]["x"], orbitals[3]["speedX"])
-  yTuple=(orbitals[0]["y"], orbitals[0]["speedY"], orbitals[1]["y"], orbitals[1]["speedY"], orbitals[2]["y"], orbitals[2]["speedY"], orbitals[3]["y"], orbitals[3]["speedY"])
-  zTuple=(orbitals[0]["z"], orbitals[0]["speedZ"], orbitals[1]["z"], orbitals[1]["speedZ"], orbitals[2]["z"], orbitals[2]["speedZ"], orbitals[3]["z"], orbitals[3]["speedZ"])
+  xTuple=(orbitals[0]["x"], orbitals[0]["speedX"], orbitals[1]["x"], orbitals[1]["speedX"])
+  yTuple=(orbitals[0]["y"], orbitals[0]["speedY"], orbitals[1]["y"], orbitals[1]["speedY"])
+  zTuple=(orbitals[0]["z"], orbitals[0]["speedZ"], orbitals[1]["z"], orbitals[1]["speedZ"])
   i=0
-  xLen=0
-  xArray=[]
-  yLen=0
-  yArray=[]
-  zLen=0
-  zArray=[]
+  cycleX=0
+  cycleY=0
+  cycleZ=0
   while(True):
     updateSpeed(orbitals)
     updatePosition(orbitals)
-    if xLen<2 and xTuple==(orbitals[0]["x"], orbitals[0]["speedX"], orbitals[1]["x"], orbitals[1]["speedX"], orbitals[2]["x"], orbitals[2]["speedX"], orbitals[3]["x"], orbitals[3]["speedX"]):
-      xLen=xLen+1
-      xArray.append(i)
-      if(xLen==2 and yLen==2 and zLen==2):
+    if cycleX==0 and xTuple==(orbitals[0]["x"], orbitals[0]["speedX"], orbitals[1]["x"], orbitals[1]["speedX"]):
+      cycleX=i+1
+      if(cycleY!=0 and cycleZ!=0):
         break
-    if yLen<2 and yTuple==(orbitals[0]["y"], orbitals[0]["speedY"], orbitals[1]["y"], orbitals[1]["speedY"], orbitals[2]["y"], orbitals[2]["speedY"], orbitals[3]["y"], orbitals[3]["speedY"]):
-      yLen=yLen+1
-      yArray.append(i)
-      if(xLen==2 and yLen==2 and zLen==2):
+    if cycleY==0 and yTuple==(orbitals[0]["y"], orbitals[0]["speedY"], orbitals[1]["y"], orbitals[1]["speedY"]):
+      cycleY=i+1
+      if(cycleX!=0 and cycleZ!=0):
         break
-    if zLen<2 and zTuple==(orbitals[0]["z"], orbitals[0]["speedZ"], orbitals[1]["z"], orbitals[1]["speedZ"], orbitals[2]["z"], orbitals[2]["speedZ"], orbitals[3]["z"], orbitals[3]["speedZ"]):
-      zLen=zLen+1
-      zArray.append(i)  
-      if(xLen==2 and yLen==2 and zLen==2):
+    if cycleZ==0 and zTuple==(orbitals[0]["z"], orbitals[0]["speedZ"], orbitals[1]["z"], orbitals[1]["speedZ"]):
+      cycleZ=i+1
+      if(cycleX!=0 and cycleY!=0):
         break
     i=i+1
-  xCycle=xArray[1]-xArray[0]
-  yCycle=yArray[1]-yArray[0]
-  zCycle=zArray[1]-zArray[0]
-  
-  return lcm(lcm(xCycle, yCycle), zCycle)
+  return lcm(lcm(cycleX, cycleY), cycleZ)
 
 print(solve())
 print(solveB())
