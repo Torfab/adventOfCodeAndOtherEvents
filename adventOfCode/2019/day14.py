@@ -1,4 +1,4 @@
-from utilityz import *
+from utility import *
 import math
 
 def parseRows(rows):
@@ -70,15 +70,6 @@ def solve(part):
       else:
         end=middlePoint
     return start
-  if part=="c":
-    return (int(int(1000000000000 / findComponents("FUEL", 1, book, {}))*(1000000000000 / findComponents("FUEL", int(1000000000000 / findComponents("FUEL", 1, book, {})),book, {}))))
-  
 
-print("a",solve("a"))
-print("b",solve("b"))
-print("c",solve("c"))
-
-def timeElapse():
-  print(solve("b"))
-
-print(evaluateTime(timeElapse))
+print(solve("a"))
+print(solve("b"))
