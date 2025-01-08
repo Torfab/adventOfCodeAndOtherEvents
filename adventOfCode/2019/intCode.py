@@ -14,7 +14,7 @@ def paramValue(value, parMode, commands, relativeBase):
   if parMode==0:
     return commands.get(value, 0)
   if parMode==2:
-    return commands[value+relativeBase]
+    return commands.get(value+relativeBase,0)
 
 def checkInstruction(commands, cursor):
   instruction=commands[cursor]
@@ -25,6 +25,15 @@ def checkInstruction(commands, cursor):
     parMode.append(int(element))
   instruction=instruction%100
   return [instruction, parMode]
+
+def translateAsciiLine(outputList):
+  rawGrid=""
+  for element in outputList:
+    rawGrid=rawGrid+chr(element)
+  return rawGrid[:-1]
+
+def inputAsciiLine(inputString):
+  return [ord(x) for x in inputString]+[10]
 
 def runSingleCommand(commands, cursor, outputs, theInput=None, relativeBase=0):
   instruction, parMode=checkInstruction(commands, cursor)
@@ -75,22 +84,28 @@ def runSingleCommand(commands, cursor, outputs, theInput=None, relativeBase=0):
     print("operation not recognized", instruction)
   return [cursor+1, relativeBase]
 
-def runCommands(commands, inputs=None, cursor=0, pauseMode=False, relativeBase=0):
+def runCommands(commands, inputs=None, cursor=0, pauseMode=False, relativeBase=0, pauseOnNewLine=False):
   if isinstance(inputs, int):
     inputs=[inputs]
   outputs=[]
   inputCursor=0
   theInput=None
-  
+  finish=True
   while(commands[cursor]!=99):
     instruction, _=checkInstruction(commands, cursor)
     if instruction==3:
       theInput=inputs[inputCursor]
       inputCursor=inputCursor+1
+    finish=False
+    if instruction==99:
+      finish=True
+    if instruction==4 and pauseOnNewLine:
+      cursor, relativeBase=runSingleCommand(commands, cursor, outputs, theInput, relativeBase)
+      if(outputs[-1]==10):
+        return [commands, outputs, cursor, finish, relativeBase]
+      continue
     if instruction==4 and pauseMode:
       cursor, relativeBase=runSingleCommand(commands, cursor, outputs, theInput, relativeBase)
-      if instruction==99:
-        return [commands, outputs, cursor, True, relativeBase]
-      return [commands, outputs, cursor, False, relativeBase]
+      return [commands, outputs, cursor, finish, relativeBase]
     cursor, relativeBase=runSingleCommand(commands, cursor, outputs, theInput, relativeBase)
-  return [commands, outputs, cursor, True, relativeBase]
+  return [commands, outputs, cursor, finish, relativeBase]
