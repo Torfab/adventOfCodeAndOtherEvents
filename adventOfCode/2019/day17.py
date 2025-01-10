@@ -73,11 +73,11 @@ def solve(part):
     A="R,10,L,8,R,10,R,4"
     B="L,6,L,6,R,10"
     C="L,6,R,12,R,12,R,10"
-    theInput=[ord(x) for x in mainInput]
-    theInputA=[ord(x) for x in A]
-    theInputB=[ord(x) for x in B]
-    theInputC=[ord(x) for x in C]
-    realInput=theInput+[10]+theInputA+[10]+theInputB+[10]+theInputC+[10]+[ord("n")]+[10]
+    theInput=inputAsciiLine(mainInput)
+    theInputA=inputAsciiLine(A)
+    theInputB=inputAsciiLine(B)
+    theInputC=inputAsciiLine(C)
+    realInput=theInput+theInputA+theInputB+theInputC+inputAsciiLine("n")
 
     commands=parseIntCode(rows)
     commands[0]=2

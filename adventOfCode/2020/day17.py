@@ -84,7 +84,7 @@ def solveB():
     cubes=doAnIteration4D(cubes)
   return len(cubes)
   
-
+print(solve())
 print(solveB())
 
 # def timeElapse():
