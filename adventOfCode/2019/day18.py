@@ -1,21 +1,21 @@
 from utilityz import *
+import heapq
 
 directions=fromDistanceBuildListOfDirections(1)
 
-def checkWhatYouCanReach(start, walls, doors, keys, grid, toPrint):
+def checkWhatYouCanReach(start, walls, doors, keys, grid, toIgnore, pathStart=0):
   visited=set()
   border=[(start)]
-  path=0
-  result=[]
+  path=pathStart
+  result={}
   while(border):
-    path=path+1
     newBorder=[]
     while(border):
       currentPoint=border.pop()
       if currentPoint in visited:
         continue
       if currentPoint in keys:
-        result.append(grid[currentPoint])
+        result[grid[currentPoint]]=path
       visited.add(currentPoint)
       for d in directions:
         tentative=sumTupleValueByValue(currentPoint, d)
@@ -23,12 +23,13 @@ def checkWhatYouCanReach(start, walls, doors, keys, grid, toPrint):
           continue
         if tentative in doors:
           # result[grid[tentative]]=path
-          result.append(grid[tentative])
+          result[grid[tentative]]=path+1
           continue
         newBorder.append(tentative)
     border=newBorder
-  if(toPrint[0] in result):
-    result.remove(toPrint[0])
+    path=path+1
+  if(toIgnore in result):
+    result.pop(toIgnore)
   return result
 
 def updateGraphDictWithFakeDoors(graphDict,fakeDoors):
@@ -38,7 +39,7 @@ def updateGraphDictWithFakeDoors(graphDict,fakeDoors):
     newFakeDoors=[]
     for k, element in graphDict.items():
       for side in ["left", "right"]:
-        element[side]=[item for item in element[side] if item not in fakeDoors]
+        element[side]={item:v for item,v in element[side].items() if item not in fakeDoors}
         if(len(element[side])==0):
           newFakeDoors.append(k)
           foundNewFakeDoor=True
@@ -56,7 +57,7 @@ def buildGraphDictFromDoors(doors, grid, walls, keys, fakeDoors):
       tentative=sumTupleValueByValue(d,element)
       if(tentative in walls):
         continue
-      resultList=checkWhatYouCanReach(tentative, walls, doors, keys, grid, (grid[element], d))
+      resultList=checkWhatYouCanReach(tentative, walls, doors, keys, grid, grid[element], 1)
       if len(resultList)==0:
         fakeDoors.append(grid[element])
         isFake=True
@@ -71,13 +72,8 @@ def buildGraphDictFromDoors(doors, grid, walls, keys, fakeDoors):
 def buildGraphKeyDict(keys, walls, doors, grid, fakeDoors):
   graphKeyDict={}
   for element in keys:
-    for d in directions:
-      tentative=sumTupleValueByValue(d,element)
-      if(tentative in walls):
-        continue
-      resultList=checkWhatYouCanReach(tentative, walls, doors, keys, grid, (grid[element], d))
-      resultList=[x for x in resultList if x not in fakeDoors]
-      break
+    resultList=checkWhatYouCanReach(element, walls, doors, keys, grid, grid[element], 0)
+    resultList={x:v for x,v in resultList.items() if x not in fakeDoors}
     graphKeyDict[grid[element]]=resultList
   return graphKeyDict
 
@@ -110,40 +106,8 @@ def findReachables(start, points, walls, startLength):
   return reachables
     
 
-def findPathTakingAll(startName, pointNames, side, grid, doors, keys, walls):
-  if side=="left":
-    directionsToCheck=directions
-  else:
-    directionsToCheck=reversed(directions)
-  
+def findPathTakingAll(startName, pointNames, side, graphDict, graphKeyDict):
 
-  points=[]
-  reverseDictPoint={}
-  for pointName in pointNames:
-    for element in keys:
-      if grid[element]==pointName:
-        break
-    points.append(element)
-    reverseDictPoint[pointName]=element
-
-  for element in doors:
-    if grid[element]==startName:
-      break
-  start=element
-
-  internalGrid={}
-  for d in directionsToCheck:
-    tentative=sumTupleValueByValue(start, d)
-    if tentative in walls:
-      continue
-    else:
-      break
-  internalGrid[start]=findReachables(tentative, points, walls, 1)
-
-  for element in points:
-    internalGrid[element]=findReachables(element, [x for x in points if x!=element]+[start], walls, 0)
-
-  
   itemForPermutation={}
   for element in pointNames:
     itemForPermutation[element]=1
@@ -151,89 +115,156 @@ def findPathTakingAll(startName, pointNames, side, grid, doors, keys, walls):
   homeMadePermutations(itemForPermutation, "", len(pointNames), thePermutations)
 
   currentMin=float("inf")
+  currentMinNoGoingBack=float("inf")
   for permutation in thePermutations:
-    permutationLength=0
-    ris=[]
-    for letter in permutation:
-      ris.append(reverseDictPoint[letter])
-    path=[start]+ris+[start]
+    path=startName+permutation+startName
+    permutationLength=graphDict[startName][side][path[1]]
 
-    currentPoint=path[0]
-    for element in path[1:]:
-      permutationLength=permutationLength+internalGrid[currentPoint][element]
+    currentPoint=path[1]
+    for element in path[2:-1]:
+      permutationLength=permutationLength+graphKeyDict[currentPoint][element]
       currentPoint=element
+    currentMinNoGoingBack=min(currentMinNoGoingBack, permutationLength)
+
+    permutationLength=permutationLength+graphKeyDict[currentPoint][startName]
     currentMin=min(currentMin, permutationLength)
-  return currentMin
+  return currentMinNoGoingBack, currentMin
 
 def updateGraphDictAfterTakingAll(graphDict):
   for doorItem in graphDict.values():
     if doorItem.get("takeAll")!=None:
       for side in ["left", "right"]:
-        doorItem[side]=[x for x in doorItem[side] if x not in doorItem["takeAll"][0]]
-        if len(doorItem[side])==0:
+        if len([x for x in doorItem[side] if x not in doorItem["takeAll"][0]])==0:
           doorItem.pop(side)
+        else:
+          doorItem["singleSide"]=doorItem.pop(side)
 
-def findPathTwoPoints(start, end, grid, walls):
-  start=[k for k,v in grid.items() if v==start][0]
-  end =[k for k,v in grid.items() if v==end][0]
-
-  visited=set()
-  border=[start]
-  pathLength=0
-  while(border):
-    newBorder=[]
-    while(border):
-      currentPoint=border.pop()
-      if currentPoint in visited:
-        continue
-      visited.add(currentPoint)
-      for d in directions:
-        tentative=sumTupleValueByValue(d, currentPoint)
-        if tentative==end:
-          return pathLength+1
-        if tentative in visited:
-          continue
-        if tentative in walls:
-          continue
-        newBorder.append(tentative)
-    border=newBorder
-    pathLength=pathLength+1
-
-def joinContiguosDoors(graphDict, grid, walls):
+def joinContiguosDoors(graphDict, graphKeyDict):
   for doorName, doorValue in list(graphDict.items()):
     if doorValue.get("left")!=None and doorValue.get("right")!=None and len(doorValue["left"])==1 and len(doorValue["right"])==1:
-      if graphDict[doorValue["left"][0]].get("left")!=None and len(graphDict[doorValue["left"][0]]["left"])!=1:
-        left=graphDict[doorValue["left"][0]]["left"]
-      elif graphDict[doorValue["left"][0]].get("right")!=None and len(graphDict[doorValue["left"][0]]["right"])!=1:
-        left=graphDict[doorValue["left"][0]]["right"]
+      leftElement=list(doorValue["left"])[0]
+      if graphDict[leftElement].get("left")!=None and len(graphDict[leftElement]["left"])!=1:
+        left=graphDict[leftElement]["left"]
+      elif graphDict[leftElement].get("right")!=None and len(graphDict[leftElement]["right"])!=1:
+        left=graphDict[leftElement]["right"]
       else:
         left=None
-      if graphDict[doorValue["right"][0]].get("left")!=None and len(graphDict[doorValue["right"][0]]["left"])!=1:
-        right=graphDict[doorValue["right"][0]]["left"]
-      elif graphDict[doorValue["right"][0]].get("right")!=None and len(graphDict[doorValue["right"][0]]["right"])!=1:
-        right=graphDict[doorValue["right"][0]]["right"]
+      rightElement=list(doorValue["right"])[0]
+      if graphDict[rightElement].get("left")!=None and len(graphDict[rightElement]["left"])!=1:
+        right=graphDict[rightElement]["left"]
+      elif graphDict[rightElement].get("right")!=None and len(graphDict[rightElement]["right"])!=1:
+        right=graphDict[rightElement]["right"]
       else:
-        left=None
-      if graphDict[doorValue["left"][0]].get("takeAll")!=None:
-        takeAll=graphDict[doorValue["left"][0]]["takeAll"]
-      elif (graphDict[doorValue["right"][0]].get("takeAll")!=None):
-        takeAll=graphDict[doorValue["right"][0]]["takeAll"]
+        right=None
+
+      if graphDict[leftElement].get("takeAll")!=None:
+        takeAll=graphDict[leftElement]["takeAll"]
+      elif (graphDict[rightElement].get("takeAll")!=None):
+        takeAll=graphDict[rightElement]["takeAll"]
       else:
         takeAll=None
       item={}
       if left:
-        item["left"]=left
+        item["singleSide"]=left
       if right:
-        item["right"]=right
+        item["singleSide"]=right
       if(takeAll):
-        item["takeAll"]=(takeAll[0],takeAll[1]+findPathTwoPoints(doorValue["left"][0], doorValue["right"][0], grid, walls))
-      
-      graphDict[doorValue["left"][0]+doorName+doorValue["right"][0]]=item
-      graphDict.pop(doorValue["left"][0])
-      graphDict.pop(doorValue["right"][0])
+        distance=list(doorValue["left"].values())[0]+list(doorValue["right"].values())[0]
+        item["takeAll"]=(takeAll[0],takeAll[1]+distance, takeAll[2]+(distance*2))
+      newKey=leftElement+doorName+rightElement
+      graphDict[newKey]=item
+      graphDict.pop(leftElement)
+      graphDict.pop(rightElement)
       graphDict.pop(doorName)
+      
+      for v in graphDict.values():
+        for sideK,sideV in v.items():
+          if sideK=="takeAll":
+            continue
+          for innerKey in list(sideV):
+            if innerKey in newKey:
+              sideV[newKey]=sideV[innerKey]
+              sideV.pop(innerKey)
+      
+      for v in graphKeyDict.values():
+        for innerKey in list(v):
+          if innerKey in newKey:
+            v[newKey]=v[innerKey]
+            v.pop(innerKey)
           
+def stampaGraph(graph):
+  for k,v in graph.items():
+    print(k, v)
 
+def exploreMaze(k,v, fullGraphDict):
+
+  border=[]
+  keysTaken=set()
+  currentPoint="@"
+  visited=set()
+  visited.add("WUS")
+  heapq.heappush(border, (v, k, currentPoint, keysTaken, visited))
+
+  currentMaxFound=float("inf")
+  
+  while(border):
+    currentLength, currentPoint, previousPoint, keysTaken, visited=heapq.heappop(border)
+    if currentLength>currentMaxFound:
+      print("scartare")
+      continue
+    visited=visited.copy()
+    visited.add(currentPoint)
+    currentItem=fullGraphDict[currentPoint]
+    if(currentItem["isDoor"]):
+      #COMPORTATI DA DOOR
+      if currentItem.get("takeAll")!=None:
+        #Porta Take all
+        newKeysTaken=keysTaken.copy()
+        for element in currentItem["takeAll"][0]:
+          newKeysTaken.add(element)
+        currentLength=currentLength+currentItem["takeAll"][2]
+        if len(newKeysTaken)==15 and "WUS" in currentItem["singleSide"]:
+          currentMaxFound=min(currentMaxFound, currentLength+currentItem["singleSide"]["WUS"])
+          # print("finito in", currentLength+currentItem["singleSide"]["WUS"], "ed il min è", currentMaxFound, "ho visitato", visited)
+          continue
+        for element, value in currentItem["singleSide"].items():
+          if element in visited:
+            continue
+          if element.islower():
+            heapq.heappush(border, (currentLength+value, element, currentPoint, newKeysTaken, visited))
+          if element.isupper() and all(x.lower() in newKeysTaken for x in element):
+            heapq.heappush(border, (currentLength+value, element, currentPoint, newKeysTaken, visited))
+      else:
+        # PORTA NORMALE
+        if(previousPoint) in currentItem["left"]:
+          checkSide=currentItem["right"]
+        else:
+          checkSide=currentItem["left"]
+        for element, value in checkSide.items():
+          if element in visited:
+            continue
+          if element.islower():
+            heapq.heappush(border, (currentLength+value, element, currentPoint, newKeysTaken, visited))
+          if element.isupper() and all(x.lower() in newKeysTaken for x in element):
+            heapq.heappush(border, (currentLength+value, element, currentPoint, newKeysTaken, visited))
+    else:
+      #Comportati da key
+      newKeysTaken=keysTaken.copy()
+      newKeysTaken.add(currentPoint)
+      if len(newKeysTaken)==15 and "WUS" in currentItem:
+        currentMaxFound=min(currentMaxFound, currentLength+currentItem["WUS"])
+        # print("finito in", currentLength+currentItem["WUS"], "ed il min è", currentMaxFound, "ho visitato", visited)
+        continue
+
+      for element, value in currentItem.items():
+        if element in visited:
+          continue
+        if element.islower():
+          heapq.heappush(border, (currentLength+value, element, currentPoint, newKeysTaken, visited))
+        if element.isupper() and all(x.lower() in newKeysTaken for x in element):
+          heapq.heappush(border, (currentLength+value, element, currentPoint, newKeysTaken, visited))
+
+  return currentMaxFound
 
 def solve():
   rows=getOldAocInput(15)
@@ -242,6 +273,7 @@ def solve():
   walls=[k for k,v in grid.items() if v=="#"]
   items=[(v,k) for k,v in grid.items() if v!="#"]
   start=[k for k,v in grid.items() if v=="@"][0]
+  
 
   # First Recognition
 
@@ -250,11 +282,16 @@ def solve():
   doors=set([x[1] for x in items[:26]])
   keys=set([x[1] for x in items[26:]])
 
-  checkWhatYouCanReach(start, walls, doors, keys, grid, (start,0))
+
+  # checkWhatYouCanReach(start, walls, doors, keys, grid, (start,0))
 
   graphDict, fakeDoors=buildGraphDictFromDoors(doors, grid, walls, keys, [])
   doorNames=set(graphDict.keys())
   
+  startList={k:v for k,v in checkWhatYouCanReach(start, walls, doors, keys, grid, grid[start], 0).items() if k not in doorNames and k not in fakeDoors}
+  print("@",startList)
+
+
   fakeDoors=set(fakeDoors)
   graphKeyDict=buildGraphKeyDict(keys, walls, doors, grid, fakeDoors)
 
@@ -264,28 +301,35 @@ def solve():
       if thingInCommonArray(value[side], doorNames):
         continue
       else:
-        takeAll.append((doorName, value[side], side))
-  
+        takeAll.append((doorName, list(value[side]), side))
 
   for element in takeAll:
-    graphDict[element[0]]["takeAll"]=(element[1],findPathTakingAll(element[0], element[1], element[2], grid, doors, keys, walls))
+    singleRun, goingBack=findPathTakingAll(element[0], element[1], element[2], graphDict, graphKeyDict)
+    graphDict[element[0]]["takeAll"]=(element[1], singleRun, goingBack)
+    for point in element[1]:
+      graphKeyDict.pop(point)
+
   updateGraphDictAfterTakingAll(graphDict)
-  joinContiguosDoors(graphDict, grid, walls)
+  joinContiguosDoors(graphDict, graphKeyDict)
 
-  print(graphDict)
+  fullGraphDict={}
+  for k,v in graphDict.items():
+    fullGraphDict[k]=v
+    fullGraphDict[k]["isDoor"]=True
+  
+  for k,v in graphKeyDict.items():
+    fullGraphDict[k]=v
+    fullGraphDict[k]["isDoor"]=False
 
-  for element in graphDict:
-    for side in ["left", "right"]:
-      return
-      # if lelement[side]
-  # comprimables={x:v for x,v in graphKeyDict.items() if len(v)==1}
+  stampaGraph(fullGraphDict)
+  startPoints=startList
+  solutions=[]
+  for k,v in startPoints.items():
 
-  # print(graphDict)
-  # print(comprimables)
-
-  # print(fakeDoors)
-  # print(graphDict)
-  # print(graphKeyDict)
+    solutions.append(exploreMaze(k,v, fullGraphDict))
+  
+  print(startPoints)
+  print(solutions)
 
 print(solve())
 
