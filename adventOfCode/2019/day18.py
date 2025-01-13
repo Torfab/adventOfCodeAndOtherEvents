@@ -354,7 +354,7 @@ def exploreFourMazes(border, myGraph):
   while(border):
     currentLength, currentPoints, previousPoints, keysTaken, visiteds, history=heapq.heappop(border)
     if(tuple(sorted(keysTaken))==("c","q","x")):
-      print(currentPoints, keysTaken)
+      print(currentPoints, keysTaken, history[:3])
     if currentLength>currentMaxFound:
       continue
     keyBigVisited=(tuple(currentPoints),tuple(sorted(keysTaken)))
@@ -367,10 +367,8 @@ def exploreFourMazes(border, myGraph):
     for cardinal in ["NW", "NE", "SW", "SE"]:
       cardinalNumber=dictCardinals[cardinal]
       currentPoint=currentPoints[cardinalNumber]
-      visited=visiteds[cardinalNumber].copy()
-      visited.add(currentPoint)
-      visiteds=visiteds.copy()
-      visiteds[cardinalNumber]=visited
+      visited=visiteds[cardinalNumber]
+      visiteds=visiteds[:cardinalNumber]+[visited.union({currentPoint})]+visiteds[cardinalNumber+1:]
 
       currentItem=myGraph[cardinal][currentPoint]
       if(currentItem["isDoor"]):
@@ -473,21 +471,11 @@ def solve(part):
     myGraphs["SW"]=buildGraphDict(myGrids["SW"])
     myGraphs["SE"]=buildGraphDict(myGrids["SE"])
     
-    stampaGraph(myGraphs["NW"])
-    print()
-    stampaGraph(myGraphs["NE"])
-    print()
-    stampaGraph(myGraphs["SW"])
-    print()
-    stampaGraph(myGraphs["SE"])
-
-    stampaGrid(myGrids["NW"])
     border=[]
     heapq.heappush(border, (0, ["@","@","@","@"], ["@","@","@","@"], set(), [{"@"},{"@"},{"@"},{"@"}], []))
-    print(exploreFourMazes(border,myGraphs))
     # print()
     # stampaGraph(myGraphs["SW"])
-    return 
+    return exploreFourMazes(border,myGraphs)
 
 
 print(solve("b"))
