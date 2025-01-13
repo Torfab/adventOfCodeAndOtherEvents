@@ -2,6 +2,7 @@ from utilityz import *
 import heapq
 
 directions=fromDistanceBuildListOfDirections(1)
+diagonalDirections=[(1,1),(1,-1),(-1,-1),(-1,1)]
 
 def checkWhatYouCanReach(start, walls, doors, keys, grid, toIgnore, pathStart=0):
   visited=set()
@@ -207,23 +208,22 @@ def stampaGraph(graph):
   for k,v in graph.items():
     print(k, v)
 
-def exploreMaze(k,v, fullGraphDict):
+def exploreMaze(border, fullGraphDict):
 
-  border=[]
-  keysTaken=set()
-  currentPoint="@"
-  visited=set()
-  visited.add("WUS")
-  heapq.heappush(border, (v, k, currentPoint, keysTaken, visited, []))
-
+  bigVisited={}
   currentMaxFound=float("inf")
-  fastHistory=[]
-  
   while(border):
     currentLength, currentPoint, previousPoint, keysTaken, visited, history=heapq.heappop(border)
     if currentLength>currentMaxFound:
       print("scartare")
       continue
+    keyBigVisited=(currentPoint,tuple(sorted(visited)))
+    if bigVisited.get(keyBigVisited)!=None:
+      if bigVisited[keyBigVisited]<=currentLength:
+        continue
+    bigVisited[keyBigVisited]=currentLength
+
+
     visited=visited.copy()
     visited.add(currentPoint)
     history=history+[(currentPoint, currentLength)]
@@ -236,11 +236,11 @@ def exploreMaze(k,v, fullGraphDict):
         for element in currentItem["takeAll"][0]:
           newKeysTaken.add(element)
         currentLength=currentLength+currentItem["takeAll"][2]
-        if len(newKeysTaken)==15 and "WUS" in currentItem["singleSide"]:
-          finalLength=currentLength+currentItem["singleSide"]["WUS"]
+        if len(newKeysTaken)==26:
+          finalLength=currentLength+currentItem["takeAll"][1]-currentItem["takeAll"][2]
           if currentMaxFound>finalLength:
             currentMaxFound=finalLength
-            fastHistory=history
+            # fastHistory=history
 
           # print("finito in", currentLength+currentItem["singleSide"]["WUS"], "ed il min è", currentMaxFound, "ho visitato", visited)
           continue
@@ -268,11 +268,11 @@ def exploreMaze(k,v, fullGraphDict):
       #Comportati da key
       newKeysTaken=keysTaken.copy()
       newKeysTaken.add(currentPoint)
-      if len(newKeysTaken)==15 and "WUS" in currentItem:
-        finalLength=currentLength+currentItem["WUS"]
+      if len(newKeysTaken)==26:
+        finalLength=currentLength
         if currentMaxFound>finalLength:
           currentMaxFound=finalLength
-          fastHistory=history
+          # fastHistory=history
         # print("finito in", currentLength+currentItem["WUS"], "ed il min è", currentMaxFound, "ho visitato", visited)
         continue
 
@@ -284,95 +284,14 @@ def exploreMaze(k,v, fullGraphDict):
         if element.isupper() and all(x.lower() in newKeysTaken for x in element):
           heapq.heappush(border, (currentLength+value, element, currentPoint, newKeysTaken, visited, history))
 
-  print(fastHistory)
   return currentMaxFound
 
-def exploreMazeFinal(k,v,fullGraphDict):
-
-  border=[]
-  keysTaken=set()
-  currentPoint="WUS"
-  visited=set()
-  visited.add("WUS")
-  heapq.heappush(border, (v, k, currentPoint, keysTaken, visited, []))
-
-  currentMaxFound=float("inf")
-  fastHistory=None
-  
-  while(border):
-    currentLength, currentPoint, previousPoint, keysTaken, visited, history=heapq.heappop(border)
-    if currentLength>currentMaxFound:
-      continue
-    visited=visited.copy()
-    visited.add(currentPoint)
-    history=history+[(currentPoint, currentLength)]
-    currentItem=fullGraphDict[currentPoint]
-    if(currentItem["isDoor"]):
-      #COMPORTATI DA DOOR
-      if currentItem.get("takeAll")!=None:
-        #Porta Take all
-        newKeysTaken=keysTaken.copy()
-        for element in currentItem["takeAll"][0]:
-          newKeysTaken.add(element)
-        currentLength=currentLength+currentItem["takeAll"][2]
-        if len(newKeysTaken)==11:
-          finalLength=currentLength+currentItem["takeAll"][1]-currentItem["takeAll"][2]
-          if(currentMaxFound>finalLength):
-            currentMaxFound=finalLength
-            fastHistory=history
-          # print("finito in", currentLength+currentItem["singleSide"]["WUS"], "ed il min è", currentMaxFound, "ho visitato", visited)
-          continue
-        for element, value in currentItem["singleSide"].items():
-          if element in visited:
-            continue
-          if element.islower():
-            heapq.heappush(border, (currentLength+value, element, currentPoint, newKeysTaken, visited, history))
-          if element.isupper() and all(x.lower() in newKeysTaken for x in element):
-            heapq.heappush(border, (currentLength+value, element, currentPoint, newKeysTaken, visited, history))
-      else:
-        # PORTA NORMALE
-        if(previousPoint) in currentItem["left"]:
-          checkSide=currentItem["right"]
-        else:
-          checkSide=currentItem["left"]
-        for element, value in checkSide.items():
-          if element in visited:
-            continue
-          if element.islower():
-            heapq.heappush(border, (currentLength+value, element, currentPoint, keysTaken, visited, history))
-          if element.isupper() and all(x.lower() in keysTaken for x in element):
-            heapq.heappush(border, (currentLength+value, element, currentPoint, keysTaken, visited, history))
-    else:
-      #Comportati da key
-      newKeysTaken=keysTaken.copy()
-      newKeysTaken.add(currentPoint)
-      if len(newKeysTaken)==11:
-        if currentMaxFound>currentLength:
-          currentMaxFound=currentLength
-        fastHistory=history
-        # print("finito in", currentLength+currentItem["WUS"], "ed il min è", currentMaxFound, "ho visitato", visited)
-        continue
-
-      for element, value in currentItem.items():
-        if element in visited:
-          continue
-        if element.islower():
-          heapq.heappush(border, (currentLength+value, element, currentPoint, newKeysTaken, visited, history))
-        if element.isupper() and all(x.lower() in newKeysTaken for x in element):
-          heapq.heappush(border, (currentLength+value, element, currentPoint, newKeysTaken, visited, history))
-
-  print(fastHistory)
-  return currentMaxFound
-
-def solve():
-  rows=getOldAocInput(15)
-  grid,_,_=buildGrid(rows)
+def buildGraphDict(grid):
   
   walls=[k for k,v in grid.items() if v=="#"]
   items=[(v,k) for k,v in grid.items() if v!="#"]
   start=[k for k,v in grid.items() if v=="@"][0]
   
-
   # First Recognition
 
   items.sort()
@@ -387,8 +306,6 @@ def solve():
   doorNames=set(graphDict.keys())
   
   startList={k:v for k,v in checkWhatYouCanReach(start, walls, doors, keys, grid, grid[start], 0).items() if k not in doorNames and k not in fakeDoors}
-  print("@",startList)
-
 
   fakeDoors=set(fakeDoors)
   graphKeyDict=buildGraphKeyDict(keys, walls, doors, grid, fakeDoors)
@@ -419,35 +336,29 @@ def solve():
     fullGraphDict[k]=v
     fullGraphDict[k]["isDoor"]=False
 
-  stampaGraph(fullGraphDict)
-  startPoints=startList
-  solutions=[]
-  for k,v in startPoints.items():
-    solutions.append(exploreMaze(k,v, fullGraphDict))
-  print(solutions)
-  fastWus=min(solutions)
+  fullGraphDict["@"]=startList
+  return fullGraphDict
+
+def buildBorderFromStartList(fullGraphDict):
+  border=[]
+  for k,v in fullGraphDict["@"].items():
+    heapq.heappush(border, (v, k, "@", set(), set(), []))
+  return border
+
+def solve(part):
+  rows=getOldAocInput(15)
+  grid,_,_=buildGrid(rows)
+  if part=="a":
+    fullGraphDict=buildGraphDict(grid)
+    border=buildBorderFromStartList(fullGraphDict)
+    return exploreMaze(border, fullGraphDict)
 
 
-  if(len(graphDict["WUS"]["left"])<len(graphDict["WUS"]["right"])):
-    check=graphDict["WUS"]["left"]
-  else:
-    check=graphDict["WUS"]["right"]
-  wusPoints={}
-  for k,v in check.items():
-    if k.isupper():
-      continue
-    else:
-      wusPoints[k]=v
-  solutions=[]
-  for k,v in wusPoints.items():
-    solutions.append(exploreMazeFinal(k,v,fullGraphDict))
-  print(solutions)
-  return fastWus+min(solutions)
 
-print(solve())
+# print(solve("a"))
+print(solve("b"))
 
 # def timeElapse():
-#   print(solve("a"))
-#   print(solve("b"))
+#   print(solve())
 
 # evaluateTime(timeElapse)
