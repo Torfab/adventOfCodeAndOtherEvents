@@ -24,7 +24,6 @@ def checkWhatYouCanReach(start, walls, doors, keys, grid, toIgnore, pathStart=0)
         if tentative in walls:
           continue
         if tentative in doors:
-          # result[grid[tentative]]=path
           result[grid[tentative]]=path+1
           continue
         newBorder.append(tentative)
@@ -68,8 +67,6 @@ def buildGraphDictFromDoors(doors, grid, walls, keys, fakeDoors):
         going="right"
     if not isFake:
       graphDict[grid[element]]=item
-  # stampaGraph(graphDict)
-  # print(fakeDoors)
   updateGraphDictWithFakeDoors(graphDict,fakeDoors)
   return graphDict, fakeDoors
 
@@ -213,49 +210,46 @@ def stampaGraph(graph):
   for k,v in graph.items():
     print(k, v)
 
-def exploreMaze(border, fullGraphDict):
+def exploreMaze(border, fullGraphDict, lenKeys):
 
-  bigVisited={}
+  stateVisited={}
   currentMaxFound=float("inf")
   while(border):
     currentLength, currentPoint, previousPoint, keysTaken, visited, history=heapq.heappop(border)
     if currentLength>currentMaxFound:
       continue
-    keyBigVisited=(currentPoint,tuple(sorted(visited)))
-    if bigVisited.get(keyBigVisited)!=None:
-      if bigVisited[keyBigVisited]<=currentLength:
+    keyStateVisited=(currentPoint,tuple(sorted(visited)))
+    if stateVisited.get(keyStateVisited)!=None:
+      if stateVisited[keyStateVisited]<=currentLength:
         continue
-    bigVisited[keyBigVisited]=currentLength
+    stateVisited[keyStateVisited]=currentLength
 
     visited=visited.copy()
     visited.add(currentPoint)
     history=history+[(currentPoint, currentLength)]
     currentItem=fullGraphDict[currentPoint]
     if(currentItem["isDoor"]):
-      #COMPORTATI DA DOOR
+      #Door behaviour
       if currentItem.get("takeAll")!=None:
-        #Porta Take all
+        #Door take all
         newKeysTaken=keysTaken.copy()
         for element in currentItem["takeAll"][0]:
           newKeysTaken.add(element)
         currentLength=currentLength+currentItem["takeAll"][2]
-        if len(newKeysTaken)==26:
+        if len(newKeysTaken)==lenKeys:
           finalLength=currentLength+currentItem["takeAll"][1]-currentItem["takeAll"][2]
           if currentMaxFound>finalLength:
             currentMaxFound=finalLength
-            # fastHistory=history
-
-          # print("finito in", currentLength+currentItem["singleSide"]["WUS"], "ed il min è", currentMaxFound, "ho visitato", visited)
           continue
         for element, value in currentItem["singleSide"].items():
           if element in visited:
             continue
           if element.islower():
-            heapq.heappush(border, (currentLength+value, element, currentPoint, newKeysTaken, visited, history))
+            heapq.heappush(border, (currentLength+value, element, currentPoint, newKeysTaken.union({element}), visited, history))
           if element.isupper() and all(x.lower() in newKeysTaken for x in element):
             heapq.heappush(border, (currentLength+value, element, currentPoint, newKeysTaken, visited, history))
       else:
-        # PORTA NORMALE
+        # Door Left Right
         if(previousPoint) in currentItem["left"]:
           checkSide=currentItem["right"]
         else:
@@ -264,28 +258,24 @@ def exploreMaze(border, fullGraphDict):
           if element in visited:
             continue
           if element.islower():
-            heapq.heappush(border, (currentLength+value, element, currentPoint, keysTaken, visited, history))
+            heapq.heappush(border, (currentLength+value, element, currentPoint, keysTaken.union({element}), visited, history))
           if element.isupper() and all(x.lower() in keysTaken for x in element):
             heapq.heappush(border, (currentLength+value, element, currentPoint, keysTaken, visited, history))
     else:
-      #Comportati da key
-      newKeysTaken=keysTaken.copy()
-      newKeysTaken.add(currentPoint)
-      if len(newKeysTaken)==26:
+      #Key behaviour
+      if len(keysTaken)==lenKeys:
         finalLength=currentLength
         if currentMaxFound>finalLength:
           currentMaxFound=finalLength
-          # fastHistory=history
-        # print("finito in", currentLength+currentItem["WUS"], "ed il min è", currentMaxFound, "ho visitato", visited)
         continue
 
       for element, value in currentItem.items():
         if element in visited:
           continue
         if element.islower():
-          heapq.heappush(border, (currentLength+value, element, currentPoint, newKeysTaken, visited, history))
-        if element.isupper() and all(x.lower() in newKeysTaken for x in element):
-          heapq.heappush(border, (currentLength+value, element, currentPoint, newKeysTaken, visited, history))
+          heapq.heappush(border, (currentLength+value, element, currentPoint, keysTaken.union({element}), visited, history))
+        if element.isupper() and all(x.lower() in keysTaken for x in element):
+          heapq.heappush(border, (currentLength+value, element, currentPoint, keysTaken, visited, history))
 
   return currentMaxFound
 
@@ -295,13 +285,9 @@ def buildGraphDict(grid):
   items=[(v,k) for k,v in grid.items() if v!="#"]
   start=[k for k,v in grid.items() if v=="@"][0]
   
-  # First Recognition
-
   doors=set([x[1] for x in items if x[0].isupper()])
   keys=set([x[1] for x in items if x[0].islower() or x[0]=="@"])
-
-
-  # checkWhatYouCanReach(start, walls, doors, keys, grid, (start,0))
+  
 
   graphDict, fakeDoors=buildGraphDictFromDoors(doors, grid, walls, keys, [])
   doorNames=set(graphDict.keys())
@@ -341,64 +327,53 @@ def buildGraphDict(grid):
 
   return fullGraphDict
 
-def buildBorderFromStartList(fullGraphDict):
-  border=[]
-  for k,v in fullGraphDict["@"].items():
-    if k.islower():
-      heapq.heappush(border, (v, k, "@", set(), set(), []))
-  return border
-
-def exploreFourMazes(border, myGraph):
+def exploreFourMazes(border, myGraph, lenKeys):
   currentMaxFound=float("inf")
-  bigVisited={}
+  stateVisited={}
   while(border):
-    currentLength, currentPoints, previousPoints, keysTaken, visiteds, history=heapq.heappop(border)
-    if(tuple(sorted(keysTaken))==("c","q","x")):
-      print(currentPoints, keysTaken, history[:3])
+    currentLength, currentPointCardinals, previousPointCardinals, keysTaken, visitedCardinals, history=heapq.heappop(border)
     if currentLength>currentMaxFound:
       continue
-    keyBigVisited=(tuple(currentPoints),tuple(sorted(keysTaken)))
-    if bigVisited.get(keyBigVisited)!=None:
-      if bigVisited[keyBigVisited]<=currentLength:
+    keyStateVisited=(tuple(currentPointCardinals),tuple(sorted(keysTaken)))
+    if stateVisited.get(keyStateVisited)!=None:
+      if stateVisited[keyStateVisited]<=currentLength:
         continue
-    bigVisited[keyBigVisited]=currentLength
-    history=history+[(currentPoints, sorted(keysTaken), currentLength)]
+    stateVisited[keyStateVisited]=currentLength
+    history=history+[(currentPointCardinals, sorted(keysTaken), currentLength)]
 
-    for cardinal in ["NW", "NE", "SW", "SE"]:
+    for cardinal in ["NW","NE","SW","SE"]:
       cardinalNumber=dictCardinals[cardinal]
-      currentPoint=currentPoints[cardinalNumber]
-      visited=visiteds[cardinalNumber]
-      visiteds=visiteds[:cardinalNumber]+[visited.union({currentPoint})]+visiteds[cardinalNumber+1:]
+      currentPoint=currentPointCardinals[cardinalNumber]
+      visited=visitedCardinals[cardinalNumber]
+      visitedCardinals=visitedCardinals[:cardinalNumber]+[visited.union({currentPoint})]+visitedCardinals[cardinalNumber+1:]
 
       currentItem=myGraph[cardinal][currentPoint]
       if(currentItem["isDoor"]):
-        #COMPORTATI DA DOOR
+        # Door Behaviour
         if currentItem.get("takeAll")!=None:
-          #Porta Take all
+          # Door with Take all
           newKeysTaken=keysTaken.copy()
           if not thingInCommonArray(currentItem["takeAll"][0], newKeysTaken):
             for element in currentItem["takeAll"][0]:
               newKeysTaken.add(element)
             currentLength=currentLength+currentItem["takeAll"][1]
-            heapq.heappush(border, (currentLength, currentPoints, previousPoints, newKeysTaken, visiteds, history))
-          if len(newKeysTaken)==26:
+            heapq.heappush(border, (currentLength, currentPointCardinals, previousPointCardinals, newKeysTaken, visitedCardinals, history))
+          if len(newKeysTaken)==lenKeys:
             finalLength=currentLength
             if currentMaxFound>finalLength:
               currentMaxFound=finalLength
-              fastHistory=history+[(currentPoints, sorted(newKeysTaken), currentLength)]
-            # print("finito in", currentLength+currentItem["singleSide"]["WUS"], "ed il min è", currentMaxFound, "ho visitato", visited)
             continue
           for element, value in currentItem["singleSide"].items():
             if element in visited:
               continue
-            newCurrentPoints=currentPoints[:cardinalNumber]+[element]+currentPoints[cardinalNumber+1:]
-            newPreviousPoints=previousPoints[:cardinalNumber]+[currentPoint]+previousPoints[cardinalNumber+1:]
+            newcurrentPointCardinals=currentPointCardinals[:cardinalNumber]+[element]+currentPointCardinals[cardinalNumber+1:]
+            newpreviousPointCardinals=previousPointCardinals[:cardinalNumber]+[currentPoint]+previousPointCardinals[cardinalNumber+1:]
             if element.islower():
-              heapq.heappush(border, (currentLength+value+currentItem["takeAll"][1], newCurrentPoints, newPreviousPoints, newKeysTaken, visiteds, history))
+              heapq.heappush(border, (currentLength+value+currentItem["takeAll"][1], newcurrentPointCardinals, newpreviousPointCardinals, newKeysTaken.union({element}), visitedCardinals, history))
             if element.isupper() and all(x.lower() in newKeysTaken for x in element):
-              heapq.heappush(border, (currentLength+value+currentItem["takeAll"][1], newCurrentPoints, newPreviousPoints, newKeysTaken, visiteds, history))
+              heapq.heappush(border, (currentLength+value+currentItem["takeAll"][1], newcurrentPointCardinals, newpreviousPointCardinals, newKeysTaken, visitedCardinals, history))
         else:
-          previousPoint=previousPoints[cardinalNumber]
+          previousPoint=previousPointCardinals[cardinalNumber]
           if(previousPoint) in currentItem["left"]:
             checkSide=currentItem["right"]
           else:
@@ -406,47 +381,41 @@ def exploreFourMazes(border, myGraph):
           for element, value in checkSide.items():
             if element in visited:
               continue
-            newCurrentPoints=currentPoints[:cardinalNumber]+[element]+currentPoints[cardinalNumber+1:]
-            newPreviousPoints=previousPoints[:cardinalNumber]+[currentPoint]+previousPoints[cardinalNumber+1:]
+            newcurrentPointCardinals=currentPointCardinals[:cardinalNumber]+[element]+currentPointCardinals[cardinalNumber+1:]
+            newpreviousPointCardinals=previousPointCardinals[:cardinalNumber]+[currentPoint]+previousPointCardinals[cardinalNumber+1:]
             if element.islower():
-              heapq.heappush(border, (currentLength+value, newCurrentPoints, newPreviousPoints, keysTaken, visiteds, history))
+              heapq.heappush(border, (currentLength+value, newcurrentPointCardinals, newpreviousPointCardinals, keysTaken.union({element}), visitedCardinals, history))
             if element.isupper() and all(x.lower() in keysTaken for x in element):
-              heapq.heappush(border, (currentLength+value, newCurrentPoints, newPreviousPoints, keysTaken, visiteds, history))
+              heapq.heappush(border, (currentLength+value, newcurrentPointCardinals, newpreviousPointCardinals, keysTaken, visitedCardinals, history))
       else:
-        #Comportati da key
-        if(currentPoint!="@"):
-          newKeysTaken=keysTaken.copy()
-          newKeysTaken.add(currentPoint)
-        else:
-          newKeysTaken=keysTaken
-        if len(newKeysTaken)==26:
+        # Key Behaviour
+        if len(keysTaken)==lenKeys:
           finalLength=currentLength
           if currentMaxFound>finalLength:
             currentMaxFound=finalLength
-            fastHistory=history+[(currentPoints, sorted(newKeysTaken), currentLength)]
-          # print("finito in", currentLength+currentItem["WUS"], "ed il min è", currentMaxFound, "ho visitato", visited)
           continue
 
         for element, value in currentItem.items():
           if element in visited:
             continue
-          newCurrentPoints=currentPoints[:cardinalNumber]+[element]+currentPoints[cardinalNumber+1:]
-          newPreviousPoints=previousPoints[:cardinalNumber]+[currentPoint]+previousPoints[cardinalNumber+1:]
+
+          newcurrentPointCardinals=currentPointCardinals[:cardinalNumber]+[element]+currentPointCardinals[cardinalNumber+1:]
+          newpreviousPointCardinals=previousPointCardinals[:cardinalNumber]+[currentPoint]+previousPointCardinals[cardinalNumber+1:]
           if element.islower():
-            heapq.heappush(border, (currentLength+value, newCurrentPoints, newPreviousPoints, newKeysTaken, visiteds, history))
-          if element.isupper() and all(x.lower() in newKeysTaken for x in element):
-            heapq.heappush(border, (currentLength+value, newCurrentPoints, newPreviousPoints, newKeysTaken, visiteds, history))
-  for element in fastHistory:
-    print(element)
+            heapq.heappush(border, (currentLength+value, newcurrentPointCardinals, newpreviousPointCardinals, keysTaken.union({element}), visitedCardinals, history))
+          if element.isupper() and all(x.lower() in keysTaken for x in element):
+            heapq.heappush(border, (currentLength+value, newcurrentPointCardinals, newpreviousPointCardinals, keysTaken, visitedCardinals, history))
   return currentMaxFound
 
 def solve(part):
   rows=getOldAocInput(15)
   grid,_,_=buildGrid(rows)
+  lenKeys=len([k for k,v in grid.items() if v.islower()])
   if part=="a":
     fullGraphDict=buildGraphDict(grid)
-    border=buildBorderFromStartList(fullGraphDict)
-    return exploreMaze(border, fullGraphDict)
+    border=[]
+    heapq.heappush(border, (0, "@", "@", set(), {"@"}, []))
+    return exploreMaze(border, fullGraphDict, lenKeys)
   
   if part=="b":
     start=[k for k,v in grid.items() if v=="@"][0]
@@ -458,7 +427,6 @@ def solve(part):
       tentative=sumTupleValueByValue(start, d)
       grid[tentative]="@"
 
-    # grid={k:blockChar if v=="#" else v for k,v in grid.items()}
     myGrids={}
     myGrids["NW"]={k:v for k,v in grid.items() if k[0]<=start[0] and k[1]<=start[1]}
     myGrids["NE"]={k:v for k,v in grid.items() if k[0]>=start[0] and k[1]<=start[1]}
@@ -473,15 +441,14 @@ def solve(part):
     
     border=[]
     heapq.heappush(border, (0, ["@","@","@","@"], ["@","@","@","@"], set(), [{"@"},{"@"},{"@"},{"@"}], []))
-    # print()
-    # stampaGraph(myGraphs["SW"])
-    return exploreFourMazes(border,myGraphs)
+    return exploreFourMazes(border,myGraphs, lenKeys)
 
 
+print(solve("a"))
 print(solve("b"))
-# print(solve("b"))
 
 # def timeElapse():
-#   print(solve())
+#   print(solve("a"))
+#   print(solve("b"))
 
 # evaluateTime(timeElapse)
