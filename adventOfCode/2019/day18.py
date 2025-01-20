@@ -446,9 +446,3 @@ def solve(part):
 
 print(solve("a"))
 print(solve("b"))
-
-# def timeElapse():
-#   print(solve("a"))
-#   print(solve("b"))
-
-# evaluateTime(timeElapse)
