@@ -1,18 +1,18 @@
-from utilityz import *
+from utility import *
 from intCode import *
 
 def checkXY(atLeastX, atLeastY, commands):
   _, output, _, _, _=runCommands(commands.copy(), inputs=[atLeastX, atLeastY])
   return output[0]
 
-def findFirstRight(atLeastX, atLeastY, commands):
+def findRightDistancFromStartOfBeam(atLeastX, atLeastY, commands):
   while(True):
     _, output, _, _, _=runCommands(commands.copy(), inputs=[atLeastX, atLeastY])
     if(output[0]==1):
       return atLeastX
     atLeastX=atLeastX+1
 
-def findHowManyRight(atLeastX, atLeastY, commands):
+def findRightDistanceFromEndOFBeam(atLeastX, atLeastY, commands):
   i=0
   while(True):
     atLeastX=atLeastX+1
@@ -39,11 +39,11 @@ def solve(part):
   atLeastY=100
 
   while(True):
-    atLeastX=findFirstRight(atLeastX, atLeastY, commands)
+    atLeastX=findRightDistancFromStartOfBeam(atLeastX, atLeastY, commands)
     if(checkXY(atLeastX, atLeastY, commands)==1 and checkXY(atLeastX+99, atLeastY, commands)==1):
-      numRight=findHowManyRight(atLeastX+99, atLeastY, commands)
+      numRight=findRightDistanceFromEndOFBeam(atLeastX+99, atLeastY, commands)
       if(checkXY(atLeastX, atLeastY+99, commands)==0):
-        newNum=findFirstRight(atLeastX, atLeastY+99, commands)
+        newNum=findRightDistancFromStartOfBeam(atLeastX, atLeastY+99, commands)
         if newNum-atLeastX-numRight<=0:
           # return atLeastX, atLeastY, newNum, numRight
           return (atLeastX+numRight)*10000+atLeastY

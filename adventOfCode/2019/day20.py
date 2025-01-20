@@ -1,4 +1,4 @@
-from utilityz import *
+from utility import *
 import heapq
 
 directions=fromDistanceBuildSetOfDirections(1)
@@ -44,16 +44,73 @@ def checkOuter(currentPoint, minBound, maxBound):
     return True
   return False
 
-def recursiveBFS(literals, portals, grid):
-  #BUILDGRAPH
-  #TRAVERSE WITH DIJKSTRA
-  return
-
-
-
-def simpleBFS(literals, portals, grid):
+def buildGraph(literals, portals, grid):
   start=literals["AA"]
   end=literals["ZZ"]
+  nodesToCheck=list(portals.keys())+[start]+[end]
+  maxBound=maxGrid(grid)
+  minBound=minGrid(grid)
+  graph={}
+  for k in nodesToCheck:
+    results=[]
+    border=[k]
+    visited=set()
+    i=0
+    while(border):
+      newBorder=[]
+      while(border):
+        currentPoint=border.pop()
+        if currentPoint in visited:
+          continue
+        visited.add(currentPoint)
+        if(currentPoint==end):
+          results.append((currentPoint, i, 0))
+        if(currentPoint in portals and k!=currentPoint):
+          if checkOuter(currentPoint, minBound, maxBound):
+            level=1
+          else:
+            level=-1
+          results.append((currentPoint, i, level))
+        for d in directions:
+          tentative=sumTupleValueByValue(currentPoint, d)
+          if tentative in visited:
+            continue
+          if tentative in grid:
+            continue
+          if tentative not in grid:
+            newBorder.append(tentative)
+      border=newBorder
+      i= i+1
+    graph[k]=results
+  return graph
+
+def recursiveBFS(start, end, literals, portals, grid):
+  graph=buildGraph(literals, portals, grid)
+  visited={}
+  border=[]
+  heapq.heappush(border, (0, start, 0))
+  while(border):
+    currentLength, currentPoint, currentLevel=heapq.heappop(border)
+    if((currentPoint, currentLevel) in visited):
+      if currentLength>=visited[(currentPoint, currentLevel)]:
+        continue
+    visited[(currentPoint, currentLevel)]=currentLength
+    for nodePoint, nodeLength, levelToAdd in graph[currentPoint]:
+      if currentLevel+levelToAdd>0:
+        continue
+      if (nodePoint, currentLevel) == (end, 0):
+        return currentLength+nodeLength
+      if nodePoint==end:
+        continue
+      if portals.get(nodePoint):
+        heapq.heappush(border, (currentLength+nodeLength+1, portals[nodePoint], currentLevel+levelToAdd))
+      else:
+        heapq.heappush(border, (currentLength+nodeLength, nodePoint, currentLevel+levelToAdd))
+
+
+
+
+def simpleBFS(start, end, portals, grid):
 
   border=[start]
   visited=set()
@@ -89,15 +146,17 @@ def solve(part):
   for c in cageElements:
     grid[c]="#"
   portals, literals=buildPortalGrid(grid)
+  start=literals["AA"]
+  end=literals["ZZ"]
   if part=="a":
-    return simpleBFS(literals, portals, grid)
+    return simpleBFS(start, end, portals, grid)
   if part=="b":
-    return recursiveBFS(literals, portals, grid)
+    return recursiveBFS(start, end, literals, portals, grid)
 
 
   return "UH"
 
-# print(solve("a"))
+print(solve("a"))
 print(solve("b"))
 
 # def timeElapse():
