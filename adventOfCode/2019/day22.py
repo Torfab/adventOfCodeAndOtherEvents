@@ -1,4 +1,4 @@
-from utilityz import *
+from utility import *
 
 # Shuffling a deck of cards with the shuffles of the problem is a linear operation
 # So use a lot of shuffles are comprimable in a single particular shuffle

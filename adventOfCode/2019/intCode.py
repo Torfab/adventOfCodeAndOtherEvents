@@ -84,7 +84,7 @@ def runSingleCommand(commands, cursor, outputs, theInput=None, relativeBase=0):
     print("operation not recognized", instruction)
   return [cursor+1, relativeBase]
 
-def runCommands(commands, inputs=None, cursor=0, pauseMode=False, relativeBase=0, pauseOnNewLine=False):
+def runCommands(commands, inputs=None, cursor=0, pauseMode=False, relativeBase=0, pauseOnNewLine=False, pauseOnInput=False):
   if isinstance(inputs, int):
     inputs=[inputs]
   outputs=[]
@@ -105,6 +105,9 @@ def runCommands(commands, inputs=None, cursor=0, pauseMode=False, relativeBase=0
         return [commands, outputs, cursor, finish, relativeBase]
       continue
     if instruction==4 and pauseMode:
+      cursor, relativeBase=runSingleCommand(commands, cursor, outputs, theInput, relativeBase)
+      return [commands, outputs, cursor, finish, relativeBase]
+    if instruction==3 and pauseOnInput:
       cursor, relativeBase=runSingleCommand(commands, cursor, outputs, theInput, relativeBase)
       return [commands, outputs, cursor, finish, relativeBase]
     cursor, relativeBase=runSingleCommand(commands, cursor, outputs, theInput, relativeBase)
