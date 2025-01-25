@@ -1,4 +1,4 @@
-from utilityz import *
+from utility import *
 from intCode import *
 
 # Technically not hard, Practically challenging.
@@ -12,7 +12,7 @@ from intCode import *
 # on all those. But you could see it only AFTER you failed and doublechecked your assumption
 # Part B was a lot more easier because almost all the "what should i do?!? why it isn't working as expected" was done on part a
 # But still i couldn't figure out what count as idle system, i had a lot of false positive where i was in idle before first nat value was done
-# And first cycle of -1 in input wasn't the best aswel. In the end i manage to have a real nat value and it was done.
+# And first cycle of -1 in input wasn't the best as well. In the end i manage to have a real nat value and it was done.
 
 def updateComputer(computer, values):
   computer["commands"]=values[0]
