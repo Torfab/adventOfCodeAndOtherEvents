@@ -86,7 +86,7 @@ def solve(part):
     return calculateScore(grid)
   if part=="b":
     grid={(k[0], k[1], 0):v for k,v in grid.items()}
-    for i in range(200):
+    for _ in range(200):
       minZ=min(k[2] for k in grid.keys())
       maxZ=max(k[2] for k in grid.keys())
       oldGrid=grid
