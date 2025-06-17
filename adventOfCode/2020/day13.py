@@ -29,6 +29,7 @@ def solve():
   return minBus*minRis
 
 def solveB():
+  #I will call this approach "middle finger to chinese reminder theoreme"
   rows=getOldAocInput(13)
   buses=parseRowsB(rows)
 

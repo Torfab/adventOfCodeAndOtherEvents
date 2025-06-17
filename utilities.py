@@ -363,3 +363,24 @@ def evaluateTime(f):
   print("time elapsed:", round(t1-t0,3), "s")
   print("time elapsed:", round((t1-t0)*1000, 3), "ms")
   return t1-t0
+
+def extended_gcd(a, b): #useful for diophantine linear equation and Chinese reminder theorem
+  if b == 0:
+    return (a, 1, 0)  # base case: gcd(a, 0) = a
+  else:
+    g, x1, y1 = extended_gcd(b, a % b)
+    x = y1
+    y = x1 - (a // b) * y1
+    return (g, x, y)
+  
+def combine_congruences(a1, n1, a2, n2):  # Congruence with CRT
+  # Combine two congruences: t ≡ a1 mod n1 and t ≡ a2 mod n2
+  # It is achievable even just counting if numbers are not too high
+  # So you reach the first cycle, and cycle until you get next one
+  # so as long as cycle are not on the 10^6 it is easily achievable
+  g, m1, m2 = extended_gcd(n1, n2)
+  if (a2 - a1) % g != 0:
+    return None, None  # No solution
+  lcm = (n1 * n2) // g
+  t = (a1 + (a2 - a1) // g * m1 * n1) % lcm
+  return t, lcm

@@ -1,4 +1,4 @@
-from utilityz import *
+from utility import *
 
 def extractNumberAndLetter(row):
   splittedRow=row.split(" ")
@@ -122,10 +122,6 @@ def parseRows(rows, swapMode):
     print(row, "right", rightTree)
 
   return extrapolateWordingFromTree(leftTree)+extrapolateWordingFromTree(rightTree)
-
-
-
-  # return leftTree, rightTree
 
 
 def solve(swapMode):
