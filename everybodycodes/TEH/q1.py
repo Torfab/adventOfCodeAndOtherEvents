@@ -1,4 +1,7 @@
-from utilityz import *
+from utility import *
+
+##I'm sad, the part 3 is very very more efficient considering it a dijkstra path through scores
+
 
 commandBehaviour={"L":(-1,0), "R":(1,0)}
 
@@ -53,7 +56,7 @@ def evaScore1(command, i, dicTop, dicBottom, grid):
   limits=maxGrid(grid)
   return calculateSingleScore(dicBottom, grid, command, limits[0], current, i+1)
 
-def evaScore2(command, i, dicTop, dicBottom, grid):
+def evaScore2(command, dicTop, dicBottom, grid):
   limits=maxGrid(grid)
   currentIdx=1
   score=0
@@ -64,18 +67,62 @@ def evaScore2(command, i, dicTop, dicBottom, grid):
   # print("il ", i, "fa", score)
   return score
 
-
-def solve(evaScore):
+def evaluateScore(command, dicTop, dicBottom, grid):
+  limits=maxGrid(grid)
+  currentIdx=1
+  scores={}
+  while(currentIdx in dicTop):
+    current=dicTop[currentIdx]
+    currentScore=calculateSingleScore(dicBottom, grid, command, limits[0], current, currentIdx)
+    scores[currentIdx]=max(0,currentScore)
+    currentIdx=currentIdx+1
+  # print("il ", i, "fa", score)
+  return scores
+  
+def solve1():
   rows=openFile("raw.txt")
   commands, grid=parseRows(rows)
   dicTop, dicBottom=setupGame(grid)
   score=0
   for i, command in enumerate(commands):
-    score=score+evaScore(command, i, dicTop, dicBottom, grid)
+    score=score+evaScore1(command, i, dicTop, dicBottom, grid)
+  return score
+
+def solve2():
+  rows=openFile("raw.txt")
+  commands, grid=parseRows(rows)
+  dicTop, dicBottom=setupGame(grid)
+  score=0
+  for i, command in enumerate(commands):
+    score=score+evaScore2(command, dicTop, dicBottom, grid)
   return score
 
 
-# print(solve(eni1))
-# print(solve(eni2))
-# print(solve(evaScore1))
-print(solve(evaScore2))
+def solve3():
+  rows=openFile("raw.txt")
+  commands, grid=parseRows(rows)
+  dicTop, dicBottom=setupGame(grid)
+  listScores=[]
+  for i, command in enumerate(commands):
+    scores=evaluateScore(command, dicTop, dicBottom, grid)
+    listScores.append(scores)
+
+  elements=dict.fromkeys(listScores[0].keys(), 1)
+  permutations=homeMadeDispositions(elements, 6)
+  print(len(permutations))
+  minScore=1000
+  maxScore=0
+  for combination in permutations:
+    currentScore=0
+    for i, element in enumerate(combination):
+      currentScore=currentScore+listScores[i][element]
+    minScore=min(currentScore, minScore)
+    maxScore=max(currentScore, maxScore)
+  result=str(minScore)+" "+str(maxScore)
+  return result
+
+
+
+# print(solve1())
+# print(solve2())
+print(solve3())

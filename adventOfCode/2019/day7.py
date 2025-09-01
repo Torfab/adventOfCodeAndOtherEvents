@@ -6,7 +6,7 @@ def solve():
   commands=parseIntCode(rows)
   elements={"0":1, "1":1, "2":1, "3":1, "4":1,}
   permutations=[]
-  homeMadePermutations(elements, "", 5, permutations)
+  homeMadePermutationsDeprecated(elements, "", 5, permutations)
   possibleResults=[]
   for permutation in permutations:
     currentOutput=0
@@ -24,7 +24,7 @@ def solveB():
   commands=parseIntCode(rows)
   elements={"5":1, "6":1, "7":1, "8":1, "9":1,}
   permutations=[]
-  homeMadePermutations(elements, "", 5, permutations)
+  homeMadePermutationsDeprecated(elements, "", 5, permutations)
   possibleResults=[]
   for permutation in permutations:
     currentOutput=0

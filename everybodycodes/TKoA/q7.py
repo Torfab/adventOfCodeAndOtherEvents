@@ -1,6 +1,6 @@
 from utility import *
 
-def homeMadePermutations(elements, subPermutation, totalLength, result):
+def homeMadePermutationsDeprecated(elements, subPermutation, totalLength, result):
   if(totalLength==len(subPermutation)):
     result.append(subPermutation)
     return
@@ -8,7 +8,7 @@ def homeMadePermutations(elements, subPermutation, totalLength, result):
   for element in elements:
     if elements[element]>0:
       elements[element]=elements[element]-1
-      homeMadePermutations(elements, subPermutation+element, totalLength, result)
+      homeMadePermutationsDeprecated(elements, subPermutation+element, totalLength, result)
       elements[element]=elements[element]+1
 
 def parseRows(rows):
@@ -121,7 +121,7 @@ def solve3():
   elements={"+":5, "-":3, "=":3}
 
   permutations=[]
-  homeMadePermutations(elements, "", 11, permutations)
+  homeMadePermutationsDeprecated(elements, "", 11, permutations)
 
   count=0
   for plan in permutations:

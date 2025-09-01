@@ -113,7 +113,7 @@ def findPathTakingAll(startName, pointNames, side, graphDict, graphKeyDict):
   for element in pointNames:
     itemForPermutation[element]=1
   thePermutations=[]
-  homeMadePermutations(itemForPermutation, "", len(pointNames), thePermutations)
+  homeMadePermutationsDeprecated(itemForPermutation, "", len(pointNames), thePermutations)
 
   currentMin=float("inf")
   currentMinNoGoingBack=float("inf")

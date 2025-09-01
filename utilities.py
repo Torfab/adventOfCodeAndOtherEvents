@@ -290,7 +290,7 @@ def removeRowsAndColumnsFromGrid(grid, rowsToRemove=[], columnsToRemove=[]):
   return newGrid
   
 
-def homeMadePermutations(elements, subPermutation, totalLength, result):
+def homeMadePermutationsDeprecated(elements, subPermutation, totalLength, result):
   """
   Build all permutations and put them in parameter result
 
@@ -312,8 +312,69 @@ def homeMadePermutations(elements, subPermutation, totalLength, result):
   for element in elements:
     if elements[element]>0:
       elements[element]=elements[element]-1
-      homeMadePermutations(elements, subPermutation+element, totalLength, result)
+      homeMadePermutationsDeprecated(elements, subPermutation+element, totalLength, result)
       elements[element]=elements[element]+1
+
+def homeMadeDispositions(elements, slots):
+    """
+    elements: dict
+        e.g. {"a": 3, "b": 2}
+        meaning we can use 'a' up to 3 times, 'b' up to 2 times
+    slots: int
+        the length of the arrangement
+    
+    Returns:
+        list of lists with all dispositions (ordered sequences)
+    """
+    results = []
+    items = list(elements.items())
+
+    def backtrack(path, remaining):
+        if len(path) == slots:
+            results.append(path[:])
+            return
+        if remaining == 0:
+            return
+
+        for i, (elem, count) in enumerate(items):
+            if count > 0:
+                items[i] = (elem, count - 1)
+                path.append(elem)
+                backtrack(path, remaining - 1)
+                path.pop()
+                items[i] = (elem, count)
+
+    backtrack([], slots)
+    return results
+
+def homeMadeCombinations(elements, slots):
+  """
+  elements: dict
+    elements are in the form {"a":3, "b":5}
+  slots: int
+    slots are the length of the word of the combination
+  """
+  results = []
+  items = list(elements.items()) 
+
+  def backtrack(start, path, remaining):
+      if len(path) == slots:
+          results.append(path[:])
+          return
+      if remaining == 0:
+          return
+      
+      for i in range(start, len(items)):
+          elem, count = items[i]
+          if count > 0:
+              items[i] = (elem, count - 1)
+              path.append(elem)
+              backtrack(i, path, remaining - 1)
+              path.pop()
+              items[i] = (elem, count)
+
+  backtrack(0, [], slots)
+  return results
 
 def mergeRanges(ranges):
   sortedRanges= sorted(ranges, key=lambda x: x[0])
