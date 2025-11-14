@@ -69,6 +69,6 @@ def solve3():
 
 
 # print(solve())
-print(solve2())
-# print(solve3())
+# print(solve2())
+print(solve3())
 
