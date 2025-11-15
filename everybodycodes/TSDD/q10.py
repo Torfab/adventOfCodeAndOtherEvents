@@ -1,4 +1,25 @@
-from utility import *
+def openFile(path):
+  file = open(path, "r")
+  rows = []
+  for line in file:
+    rows.append(line.rstrip("\r\n"))
+  return rows
+
+def sumTupleValueByValue(a,b):
+  return a[0]+b[0], a[1]+b[1]
+
+def maxGrid(grid):
+  return max(a[0] for a in grid), max(a[1] for a in grid)
+
+def buildGrid(rows, neutralElement="."):
+  grid={}
+  for y in range(len(rows)):
+    for x in range(len(rows[y])):
+      if(rows[y][x]!=neutralElement):
+        grid[(x,y)]=rows[y][x]
+  limits=maxGrid(grid)
+  return grid, limits[0], limits[1]
+
 import functools
 
 directions=[(2,1), (2,-1), (-2,1), (-2,-1), (1, 2), (-1, 2), (1, -2), (-1,-2)]
@@ -88,10 +109,9 @@ def solve2():
         tentative=sumTupleValueByValue(element, d)
         if(tentative[0]<0 or tentative[0]>maxColumn or tentative[1]<0 or tentative[1]>maxRow):
           continue
-        if(tentative not in bushes):
-          if tentative in sheeps:
-            eaten=eaten+1
-            sheeps.remove(tentative)
+        if(tentative not in bushes and tentative in sheeps):
+          eaten=eaten+1
+          sheeps.remove(tentative)
         newdrakePositions.add(tentative)
     drakePositions=newdrakePositions
 
@@ -123,7 +143,7 @@ def findSafeSpots(rows):
     safeSpots.append((a, currentRow+1))
   return(safeSpots)
 
-def solveBSF():
+def solveBFS():
   rows=openFile("raw.txt") 
   drake, sheeps, bushes, maxRow, maxColumn=parseRows3(rows)
 
@@ -202,7 +222,6 @@ def howManyVictories(drake, sheeps, bushes, safeSpots, maxRow, maxColumn, turn):
       tentative=sumTupleValueByValue(sheep, (0,1))
       if(tentative in safeSpots):
         moved=True
-        continue
       elif(tentative==drake and tentative not in bushes):
         continue
       else:
@@ -234,7 +253,7 @@ def howManyVictories(drake, sheeps, bushes, safeSpots, maxRow, maxColumn, turn):
   return result
 
 
-def solveDSF():
+def solveDFS():
   
   rows=openFile("raw.txt") 
   drake, sheeps, bushes, maxRow, maxColumn=parseRows3(rows)
@@ -247,6 +266,6 @@ def solveDSF():
 
   return vic
 
-# print(solveBSF())
-# print(solveDSF())
+print(solveBFS())
+print(solveDFS())
 
