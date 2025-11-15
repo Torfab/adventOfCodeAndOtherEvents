@@ -1,4 +1,5 @@
 from utility import *
+import functools
 
 directions=[(2,1), (2,-1), (-2,1), (-2,-1), (1, 2), (-1, 2), (1, -2), (-1,-2)]
 
@@ -14,7 +15,6 @@ def parseRows(rows):
   return drake, sheeps, idxRow, idxColumn
 
 def parseRows2(rows):
-  drake=(-1,-1)
   sheeps=set()
   bushes=set()
   for idxRow, row in enumerate(rows):
@@ -26,8 +26,9 @@ def parseRows2(rows):
       if(c=="#"):
         bushes.add((idxColumn, idxRow))
 
+  return drake, sheeps, bushes, idxColumn, idxRow
+
 def parseRows3(rows):
-  drake=(-1,-1)
   sheeps=[]
   bushes=set()
   for idxRow, row in enumerate(rows):
@@ -111,46 +112,141 @@ def solve2():
   return eaten
   # return rows
 
-def solve3():
+def findSafeSpots(rows):
+  grid, maxCol, maxRow = buildGrid(rows)
+  safeSpots=[]
+  for a in range(maxCol+1):
+    currentRow=maxRow
+    while (grid.get((a,currentRow), '.')=="#"):
+      currentRow=currentRow-1
+      
+    safeSpots.append((a, currentRow+1))
+  return(safeSpots)
+
+def solveBSF():
   rows=openFile("raw.txt") 
   drake, sheeps, bushes, maxRow, maxColumn=parseRows3(rows)
 
-  drakePositions=set()
-  drakePositions.add(drake)
 
-  status={(drake, sheeps[0], sheeps[1], sheeps[2], sheeps[3], sheeps[4]):1}
-  print(status)
+  result=0
 
-  while(True):
+  safeSpots=findSafeSpots(rows)
+  # print(safeSpots)
+
+  listState=[drake]+sheeps
+  status={tuple(listState):1}
+
+  lenSheep=len(sheeps)
+
+
+  sheepMap={}
+  for idx, sheep in enumerate(sheeps):
+    sheepMap[sheep[0]]=idx+1
+
+  while(len(status)>0):
+    newStatus={}
+    for state, multiplicity in status.items():
+      moved=False
+      for idx in range(lenSheep):
+        if(state[idx+1]==(-1,-1)):
+          continue
+        tentative = sumTupleValueByValue(state[idx+1], (0,1))
+        if(tentative in safeSpots):
+          moved=True
+          continue
+        if tentative==state[0] and tentative not in bushes:
+          continue
+        else:
+          moved=True
+          listedState=list(state)
+          listedState[idx+1]=tentative
+          newStatus[tuple(listedState)]=newStatus.get(tuple(listedState), 0)+multiplicity
+      if(moved==False):
+        newStatus[state]=newStatus.get(state,0) + multiplicity
+    status=newStatus
+    # print(len(status), "post scappati")
     newStatus={}
     for state, multiplicity in status.items():
       for d in directions:
         tentative=sumTupleValueByValue(state[0], d)
         if(tentative[0]<0 or tentative[0]>maxColumn or tentative[1]<0 or tentative[1]>maxRow):
           continue
-        if(tentative not in bushes):
-          if tentative in sheeps:
-            newStatus[(d,dppasdfmopasfopasd,pfa,fopsefop)]
-            sheeps.remove(tentative)
-        newdrakePositions.add(tentative)
-    drakePositions=newdrakePositions
+        listState=list(state)
+        if(tentative not in bushes and tentative in listState[1:]):
+          columnTaken=tentative[0]
+          listState[sheepMap[columnTaken]]=(-1,-1)
+          win=True
+          for idx in range(lenSheep):
+            if(listState[idx+1]!=(-1,-1)):
+              win=False
+          if(win):
+            result=result+multiplicity
+            continue
+          else:
+            listState[0]=tentative
+            newStatus[tuple(listState)]=newStatus.get(tuple(listState), 0)+multiplicity
+            continue
+        listState[0]=tentative
+        newStatus[tuple(listState)]=newStatus.get(tuple(listState), 0)+multiplicity
+    status=newStatus
 
-    newSheeps=set()
-    for sheep in sheeps:
+  return result
+
+
+@functools.cache
+def howManyVictories(drake, sheeps, bushes, safeSpots, maxRow, maxColumn, turn):
+  result=0
+  if turn=="S":
+    moved=False
+    for idx, sheep in enumerate(sheeps):
       tentative=sumTupleValueByValue(sheep, (0,1))
-      if(tentative[1]>maxRow):
+      if(tentative in safeSpots):
+        moved=True
         continue
+      elif(tentative==drake and tentative not in bushes):
+        continue
+      else:
+        moved=True
+        listSheeps=list(sheeps)
+        listSheeps[idx]=tentative
+        result=result+howManyVictories(drake, tuple(listSheeps), bushes, safeSpots, maxRow, maxColumn, "D")
+    if moved==False:
+      result=result+howManyVictories(drake, sheeps, bushes, safeSpots, maxRow, maxColumn, "D")
+  else:
+    for d in directions:
+      tentative=sumTupleValueByValue(drake, d)
+      if tentative[0]<0 or tentative[0]>maxColumn or tentative[1]<0 or tentative[1]>maxRow:
+        continue
+      if tentative in bushes:
+        result=result+howManyVictories(tentative, sheeps, bushes, safeSpots, maxRow, maxColumn, "S")
+      else:
+        if tentative in sheeps:
+          listSheeps=list(sheeps)
+          listSheeps.remove(tentative)
+          if(len(listSheeps))==0:
+            result=result+1
+          else:
+            result=result+howManyVictories(tentative, tuple(listSheeps), bushes, safeSpots, maxRow, maxColumn, "S")
+        else:
+          result=result+howManyVictories(tentative, sheeps, bushes, safeSpots, maxRow, maxColumn, "S")
 
-      if(tentative in bushes):
-        newSheeps.add(tentative)
-        continue
-      if(tentative in drakePositions):
-        eaten=eaten+1
-        continue
-      newSheeps.add(tentative)
-    sheeps=newSheeps
-  return eaten
-  # return rows
 
-print(solve3())
+  return result
+
+
+def solveDSF():
+  
+  rows=openFile("raw.txt") 
+  drake, sheeps, bushes, maxRow, maxColumn=parseRows3(rows)
+  sheeps=tuple(sheeps)
+  safeSpots=tuple(findSafeSpots(rows))
+  bushes=tuple(bushes)
+
+  vic=howManyVictories(drake, sheeps, bushes, safeSpots, maxRow, maxColumn, "S")
+
+
+  return vic
+
+# print(solveBSF())
+# print(solveDSF())
 
