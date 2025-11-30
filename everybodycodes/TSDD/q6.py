@@ -14,14 +14,12 @@ def insertInWeirdTree(weirdTree, value):
   if(weirdTree.get("value")==None):
     weirdTree["value"]=value
     return
-  if(value<weirdTree["value"]):
-    if(weirdTree.get("left")==None):
-      weirdTree["left"]=value
-      return    
-  if(value>weirdTree["value"]):
-    if(weirdTree.get("right")==None):
-      weirdTree["right"]=value
-      return
+  if(value<weirdTree["value"] and weirdTree.get("left")==None):
+    weirdTree["left"]=value
+    return    
+  if(value>weirdTree["value"] and weirdTree.get("right")==None):
+    weirdTree["right"]=value
+    return
   if (weirdTree.get("down")==None):
     weirdTree["down"]={}
   insertInWeirdTree(weirdTree["down"], value)

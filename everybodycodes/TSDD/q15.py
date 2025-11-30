@@ -52,7 +52,6 @@ def solve2():
     start=(0,0)
     orders=raw.split(',')
     cursor=0
-    grid={}
     current=start
     
     
@@ -87,7 +86,7 @@ def solvePrint():
             cursor=(cursor+1)%lenDirection
         else:
             cursor=(cursor-1)%lenDirection
-        for a in range((int(element[1:])*4)//1000000):
+        for _ in range((int(element[1:])*4)//1000000):
             newSpot=sumTuple(current, direction[cursor])            
             grid[newSpot]="#"
             current=newSpot
@@ -132,21 +131,17 @@ def solveCompressed():
         arrOfPoints.append(sumTuple(current, direction[cursor-2]))
     arrOfPoints.append(sumTuple(current, direction[cursor-1]))
     arrOfPoints.append(sumTuple(current, direction[cursor-3]))
-    end=current
 
-    arrPointX=list(set([x[0] for x in arrOfPoints]))
-    arrPointY=list(set([x[1] for x in arrOfPoints]))
+    arrPointX= list({x[0] for x in arrOfPoints})
+    arrPointY=list({x[1] for x in arrOfPoints})
     
     arrPointX.sort()
     arrPointY.sort()
     xMap={x:i for i,x in enumerate(arrPointX)}
     yMap={y:i for i,y in enumerate(arrPointY)}
-    
-    start=(xMap[0], yMap[0])
     orders=raw.split(",")
     cursor=-1
     grid={}
-    current=start
     numCurrent=(0,0)
     for element in orders:
         if element[0]=="R":
