@@ -6,7 +6,6 @@ import math
 def solve():
     elements=[int(x) for x in raw.split(",")]
     end=90
-    start=1
     sumz=0
     for element in elements:
         sumz=sumz+end//element
