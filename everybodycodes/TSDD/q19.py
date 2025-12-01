@@ -24,8 +24,7 @@ def solve():
     # Se la distanza fosse pari e l'altezza corrente pario avrei raggiungo solo numeri pari
     # distanza dispari e altezza dispari num pari
     # distanza pari e altezza dispari num dispari
-    print(currentPositions)
-    if distance+next(iter(currentPositions))[0]%2==0:
+    if (distance+next(iter(currentPositions))[0])%2==0:
       if heightStart%2==0:
         offSet=0
       else:
@@ -41,15 +40,14 @@ def solve():
     while(realHeight<heightEnd):
       reachablePoints.append(realHeight)
       realHeight=realHeight+2
-    print(reachablePoints)
     newPositions=set()
     for position in currentPositions:
       currentHeight, flapNumbers=position
       for reachablePoint in reachablePoints:
-        flapNumbers=flapNumbers+(distance+reachablePoint-currentHeight)//2
-        if flapNumbers<0 or flapNumbers>distance:
+        newFlapNumbers=(distance+reachablePoint-currentHeight)//2
+        if newFlapNumbers<0 or newFlapNumbers>distance:
           continue
-        newPositions.add((reachablePoint, flapNumbers))
+        newPositions.add((reachablePoint, flapNumbers+newFlapNumbers))
     currentPositions=newPositions
     horizontal=distanceFromZero
 
