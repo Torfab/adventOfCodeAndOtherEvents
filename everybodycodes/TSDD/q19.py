@@ -1,10 +1,10 @@
 from utility import *
 
 def parseRows(rows):
-  obstacles=[]
+  obstacles={}
   for row in rows:
     rowSplitted=[int(x) for x in row.split(",")]
-    obstacles.append(tuple(rowSplitted))
+    obstacles[rowSplitted[0]]=obstacles.get(rowSplitted[0], [])+[(rowSplitted[1], rowSplitted[2])]
 
   return obstacles
 
@@ -15,31 +15,34 @@ def solve():
   currentPositions=set()
   currentPositions.add((0,0)) #height and flaps
   horizontal=0
-  for obstacle in obstacles:
-    distanceFromZero, heightStart, height=obstacle
-    distance=distanceFromZero-horizontal
-    heightEnd=heightStart+height
-
-    # Data la distanza dispari e l'altezza corrente pari io posso raggiungere solo numeri dispari
-    # Se la distanza fosse pari e l'altezza corrente pario avrei raggiungo solo numeri pari
-    # distanza dispari e altezza dispari num pari
-    # distanza pari e altezza dispari num dispari
-    if (distance+next(iter(currentPositions))[0])%2==0:
-      if heightStart%2==0:
-        offSet=0
-      else:
-        offSet=1
-    else:
-      if heightStart%2==0:
-        offSet=1
-      else:
-        offSet=0      
-
-    realHeight=heightStart+offSet
+  obstaclesKeys=list(obstacles.keys())
+  obstaclesKeys.sort()
+  for obstaclesKey in obstaclesKeys:
     reachablePoints=[]
-    while(realHeight<heightEnd):
-      reachablePoints.append(realHeight)
-      realHeight=realHeight+2
+    distance=obstaclesKey-horizontal
+    for obstacle in obstacles[obstaclesKey]:
+      heightStart, height=obstacle
+      heightEnd=heightStart+height
+
+      # Data la distanza dispari e l'altezza corrente pari io posso raggiungere solo numeri dispari
+      # Se la distanza fosse pari e l'altezza corrente pario avrei raggiungo solo numeri pari
+      # distanza dispari e altezza dispari num pari
+      # distanza pari e altezza dispari num dispari
+      if (distance+next(iter(currentPositions))[0])%2==0:
+        if heightStart%2==0:
+          offSet=0
+        else:
+          offSet=1
+      else:
+        if heightStart%2==0:
+          offSet=1
+        else:
+          offSet=0      
+
+      realHeight=heightStart+offSet
+      while(realHeight<heightEnd):
+        reachablePoints.append(realHeight)
+        realHeight=realHeight+2
     newPositions=set()
     for position in currentPositions:
       currentHeight, flapNumbers=position
@@ -49,11 +52,9 @@ def solve():
           continue
         newPositions.add((reachablePoint, flapNumbers+newFlapNumbers))
     currentPositions=newPositions
-    horizontal=distanceFromZero
+    horizontal=obstaclesKey
 
-
-
-  return currentPositions
+  return min([x[1] for x in currentPositions])
 
 
 print(solve())
