@@ -1,3 +1,5 @@
+from utility import *
+
 def parseRows(rows):
   ranges=rows[0].split(",")
   toCheck=[]
@@ -18,9 +20,8 @@ def isValid2(idx):
   idx=str(idx)
   lenId=len(idx)
   for i in range(1,lenId):
-    if(lenId%i==0):
-      if idx[:i]*(lenId//i)==idx:
-        return False
+    if(lenId%i==0 and idx[:i]*(lenId//i)==idx):
+      return False
   return True
 
 def solve(f):

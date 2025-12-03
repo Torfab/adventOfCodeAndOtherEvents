@@ -1,4 +1,4 @@
-import * from utility
+from utility import *
 
 def parseRows(rows):
   orders=[]
@@ -25,7 +25,8 @@ def solve():
   return count
     
 def solve2():
-  orders=parseRows(raw)
+  rows=getOldAocInput(1)
+  orders=parseRows(rows)
   size=100
   current=50
   count=0
@@ -37,9 +38,8 @@ def solve2():
     count=count+order[1]//100
     realOrder=order[1]%size
     newPosition=(current+direction*realOrder)
-    if current!=0:
-      if newPosition<=0 or newPosition>=100:
-        count=count+1
+    if current!=0 and (newPosition<=0 or newPosition>=100):
+      count=count+1
     current=newPosition%size
   return count
 
