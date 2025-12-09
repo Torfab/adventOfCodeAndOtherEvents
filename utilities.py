@@ -249,6 +249,9 @@ def flipGrid(grid, boundaries=None):
     boundaries=maxGrid(grid)
   return {(boundaries[0]-k[0], k[1]):v for k,v in grid.items()}
 
+def filterGrid(grid, value):
+  return [k for k, v in grid.items() if v == value]
+
 def stampaGridFile(grid, maxX=None, maxY=None, void=".", toss=False):
   if toss:
     open("output.txt", "w").close()

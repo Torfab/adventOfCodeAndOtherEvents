@@ -1,67 +1,65 @@
-import * from utility
+from utilityz import *
 
-raw=getOldAocInput(7)
 
-def myMul(a,b):
-    return a*b
-    
-def mySum(a,b):
-    return a+b
+def parseRows(rows):
+  grid, maxX, maxY=buildGrid(rows)
+  start=filterGrid(grid, "S")[0]
+  return grid, maxX, maxY,start
 
-decodeOperation={"*":myMul, "+":mySum}
-
-def parseRows(raw):
-    commandRows=[]
-    for row in raw:
-        singleRow=[]
-        for val in row.split(" "):
-            if val!="" and val!=" ":
-                singleRow.append(val)
-        commandRows.append(singleRow)
-    commands=[]
-    for i in range(len(commandRows[0])):
-        commandColumn=[]
-        for element in commandRows:
-            commandColumn.append(element[i])
-        commands.append(commandColumn)
-    return commands
-    
 def solve():
-    commands=parseRows(raw)
-    result=0
-    for element in commands:
-        f=decodeOperation[element[-1]]
-        partialRes=int(element[0])
-        for i in range(len(element)-2):
-            partialRes=f(partialRes, int(element[i+1]))
-        result=result+partialRes
-    return result
-    
+  rows=getOldAocInput(7)
+  grid, maxX, maxY, start=parseRows(rows)
+
+  newBorder=set()
+  newBorder.add(start)
+  hitted=set()
+  while(newBorder):
+    border=newBorder
+    newBorder=set()
+    while(border):
+      position=border.pop()
+      if position[1]>maxY:
+        continue
+      if grid.get(position, None)=="^":
+        hitted.add(position)
+        tentative=sumTupleValueByValue(position, (1,1))
+        if tentative[0]>=0 and tentative[0]<=maxX:
+          newBorder.add(sumTupleValueByValue(position, (1,1)))
+        tentative=sumTupleValueByValue(position, (-1,1))
+        if tentative[0]>=0 and tentative[0]<=maxX:
+          newBorder.add(sumTupleValueByValue(position, (-1,1)))
+      else:
+        newBorder.add(sumTupleValueByValue(position, (0,1)))
+  return len(hitted)
+
 def solve2():
-    calc="+"
-    result=0
-    for i in range(len(raw[0])):
-        if raw[-1][i] in ["*", "+"]:
-            calc=raw[-1][i]
-            numbers=[]
-        numb=""
-        for row in raw[:-1]:
-            numb=numb+row[i]
-        numb=numb.strip()
-        if numb:
-            numbers.append(int(numb))
+  rows=getOldAocInput(7)
+  grid, maxX, maxY, start=parseRows(rows)
+
+  newBorder={}
+  newBorder[start]=1
+  count=0
+  while(newBorder):
+    border=newBorder
+    newBorder={}
+    for k,v in border.items():
+      position, quantity=k,v
+      if position[1]>maxY:
+        count=count+quantity
+        continue
+      if grid.get(position, None)=="^":
+        tentative=sumTupleValueByValue(position, (1,1))
+        if tentative[0]>=0 and tentative[0]<=maxX:
+          newBorder[tentative]=newBorder.get(tentative, 0)+quantity
         else:
-            partialRes=numbers[0]
-            f=decodeOperation[calc]
-            for idx in range(len(numbers)-1):
-                partialRes=f(partialRes, numbers[idx+1])
-            result=result+partialRes
-    partialRes=numbers[0]
-    f=decodeOperation[calc]
-    for idx in range(len(numbers)-1):
-        partialRes=f(partialRes, numbers[idx+1])
-    result=result+partialRes
-    return result    
-            
+          count=count+quantity
+        tentative=sumTupleValueByValue(position, (-1,1))
+        if tentative[0]>=0 and tentative[0]<=maxX:
+          newBorder[tentative]=newBorder.get(tentative, 0)+quantity
+        else:
+          count=count+quantity
+      else:
+        newBorder[sumTupleValueByValue(position, (0,1))]=newBorder.get(sumTupleValueByValue(position, (0,1)), 0)+quantity
+  return count
 
 print(solve2())
