@@ -1,5 +1,6 @@
 from utilityz import *
 
+# No need any Dynamic programming
 
 def parseRows(rows):
   grid, maxX, maxY=buildGrid(rows)

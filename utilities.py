@@ -76,6 +76,13 @@ def distanceBetweenTwoTuples(a,b):
 def distanceBetweenTwoTriplettes(a,b):
   return abs(a[0]-b[0])+abs(a[1]-b[1])+abs(a[2]-b[2])
 
+def eucledianDistance(a,b,size=2):
+  sumz=0
+  for idx in range(size):
+    sumz=sumz+(a[idx]-b[idx])**2
+  return math.sqrt(sumz)
+
+
 
 def sumArrayValueByValue(a, b):
   return list(map(sum, zip(a, b)))
