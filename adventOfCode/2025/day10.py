@@ -1,6 +1,7 @@
 from utilityz import * 
-## Oggi mi sono arreso a Z3, quantomeno ho un explainer di come ha fatto
-## Da reimplementare come ricerca bisezionale vedi reddit
+import functools
+
+## Reimplementato al posto di Z3, tra l'altro Z3 mi dava un brutto off by one error
 
 from z3 import *
 
@@ -107,6 +108,30 @@ def findJoltage(joltage, buttons):
     return None, None
 
 
+def bisectSolution(joltage, buttons):
+  @functools.cache
+  def internalBisectSolution(joltage):
+    if all(i==0 for i in joltage):
+      return 0
+    answer=1000000
+    configuration=tuple([x%2 for x in joltage])
+    combinations=findCombination(configuration, buttons)
+    for pattern_cost, pattern in combinations:
+      newState=[0]*len(joltage)
+      for el in pattern:
+        for b in buttons[el]:
+          newState[b]=newState[b]-1
+      newJoltage=sumTupleGeneric(newState, joltage)
+      if any(x<0 for x in newJoltage):
+        continue
+      else:
+        newJoltage= tuple(x//2 for x in newJoltage)
+        answer = min(answer, pattern_cost + 2 * internalBisectSolution(newJoltage))
+    return answer
+  solution=internalBisectSolution(joltage)
+  # print(solution)
+  return solution
+
 
 def parseRow(raw):
   result=[]
@@ -138,6 +163,9 @@ def findCombination(configuration, buttons):
   newStates.append((state, buttonsPressed))
   states=[]
   iteration=0
+  results=[]
+  if all(x==0 for x in configuration):
+    results.append((0, []))
   while(newStates):
     states=newStates
     newStates=[]
@@ -150,12 +178,13 @@ def findCombination(configuration, buttons):
         for el in buttons[i]:
           tentativeState[el]=(tentativeState[el]+1)%2
         if tuple(tentativeState)==configuration:
-          return iteration, buttonPressed[1:]+[i]
-        else:
-          newStates.append((tentativeState, buttonPressed+[i]))
+          results.append((iteration, buttonPressed[1:]+[i]))
+        newStates.append((tentativeState, buttonPressed+[i]))
     #print(newStates)
-  print("oh no")
-  return
+  return results
+
+def findMinIteration(configuration, buttons):
+  return min([x[0] for x in findCombination(configuration, buttons)])
 
 def solve():
   rows=getOldAocInput(10)
@@ -168,19 +197,21 @@ def solve():
     for i, element in enumerate(configuration):
       if element==1:
         turnedOn.append(i)
-    iteration, _=findCombination(configuration, buttonList)
+    print(configuration, buttonList)
+    iteration=findMinIteration(configuration, buttonList)
     count=count+iteration 
   return count
 
-def solve2():
+def solve2(f):
   rows=getOldAocInput(10)
   schematics=parseRow(rows)
   count=0
   for i, schematic in enumerate(schematics):
     joltage=schematic["joltage"]
     buttonList=schematic["buttons"]
-    num=findJoltage(joltage, buttonList)
-    count=count+findJoltage(joltage, buttonList)
+    count=count+f(joltage, buttonList)
   return count
 
-print(solve2())
+# print(solve())
+print(solve2(bisectSolution))
+print(solve2(findJoltage))
