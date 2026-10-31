@@ -240,6 +240,24 @@ def stampaGrid(data, minBound=None, maxBound=None, void="."):
       print(getValue(x,y), end="")
     print()
 
+def stampaGridNormalized(data, minBound=None, maxBound=None, void="."):
+  if isinstance(data, dict):  
+      def getValue(x, y):
+          return data.get((x, y), void)  
+  elif isinstance(data, (set, list)):  
+      points=set(data)  
+      def getValue(x, y):
+          return "#" if (x, y) in points else void
+  if(minBound==None):
+    minBound=minGrid(data)
+  if(maxBound==None):
+    maxBound=maxGrid(data)
+  for y in range(minBound[1], maxBound[1]+1):
+    for x in range(minBound[0], maxBound[0]+1):
+      print(getValue(x,y)*2, end="")
+    print()
+
+
 def rotateGrid90(grid, boundaries=None):
   if boundaries==None:
     boundaries=maxGrid(grid)
