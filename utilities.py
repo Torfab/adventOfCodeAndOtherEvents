@@ -1,6 +1,6 @@
 from datetime import date
 import math
-import aocd
+
 
 #rotations in 3d, 3,4,5 means -x,-y,-z
 rotations=[(0,1,2), (3,4,2), (1,3,2), (4,0,2), (3,1,5), (0,4,5), (1,0,5), (4,3,5),(0,5,1), (3,2,1), (5,3,1), (2,0,1), (3,5,4), (0,2,4), (5,0,4), (2,3,4), (2,1,3), (5,4,3), (1,5,3), (4,2,3), (5,1,0), (2,4,0), (1,2,0), (4,5,0)]
@@ -103,11 +103,13 @@ def thingInCommonArrayWithValue(a,b, ignore=None):
   return False, None
 
 def getAocInput(day, year=date.today().year):
+  import aocd
   if(day==-1):
     return openFile("test.txt")
   return aocd.get_data(day=day, year=year).split("\n")
 
 def submitToday(answer):
+  import aocd
   return aocd.submit(answer)
 
 def fromBinaryToInteger(binary):
@@ -444,14 +446,25 @@ def bronKerbosh(cricca, tentatives, excludes, graph, maxCricca):
     excludes.add(t)
 
 
-def evaluateTime(f):
+def evaluateTime(function_to_measure, *arguments, repetitions=5, **keyword_arguments):
   import time
-  t0=time.time()
-  f()
-  t1=time.time()
-  print("time elapsed:", round(t1-t0,3), "s")
-  print("time elapsed:", round((t1-t0)*1000, 3), "ms")
-  return t1-t0
+  durations = []
+  result = None
+  for _ in range(repetitions):
+      start_time = time.perf_counter()
+      result = function_to_measure(*arguments, **keyword_arguments)
+      end_time = time.perf_counter()
+      durations.append(end_time - start_time)
+
+  best_duration = min(durations)
+  average_duration = sum(durations) / len(durations)
+  worst_duration = max(durations)
+
+  print(f"result={result}")
+  print(f"best {best_duration * 1000:.3f} ms | "
+        f"average {average_duration * 1000:.3f} ms | "
+        f"worst {worst_duration * 1000:.3f} ms  ({repetitions} runs)")
+  return
 
 def extended_gcd(a, b): #useful for diophantine linear equation and Chinese reminder theorem
   if b == 0:
