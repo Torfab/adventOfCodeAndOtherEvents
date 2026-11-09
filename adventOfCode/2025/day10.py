@@ -1,4 +1,4 @@
-from utilityz import * 
+from utility import * 
 import functools
 
 ## Reimplementato al posto di Z3, tra l'altro Z3 mi dava un brutto off by one error
