@@ -455,12 +455,12 @@ def evaluateTime(function_to_measure, *arguments, repetitions=5, **keyword_argum
       result = function_to_measure(*arguments, **keyword_arguments)
       end_time = time.perf_counter()
       durations.append(end_time - start_time)
+      print(f"{result} - {(end_time - start_time)*1000:.3f}ms")
 
   best_duration = min(durations)
   average_duration = sum(durations) / len(durations)
   worst_duration = max(durations)
 
-  print(f"result={result}")
   print(f"best {best_duration * 1000:.3f} ms | "
         f"average {average_duration * 1000:.3f} ms | "
         f"worst {worst_duration * 1000:.3f} ms  ({repetitions} runs)")
