@@ -26,7 +26,7 @@ def findIsolated(offset, size, grid):
   return True
 
 def solve(part):
-  rows= openFile("raw.txt")
+  rows=getOldAocInput(3)
   rows=parseRows(rows)
 
   grid={}

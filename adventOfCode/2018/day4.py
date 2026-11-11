@@ -58,7 +58,7 @@ def parseRows(rows):
   return  guards
 
 def solve(part):
-  rows= openFile("raw.txt")
+  rows=getOldAocInput(4)
   guards=parseRows(rows)
 
 

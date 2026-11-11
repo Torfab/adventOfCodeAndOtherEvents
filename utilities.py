@@ -226,6 +226,9 @@ def cageGridWithWalls(maxLimits, minLimits=(0,0)):
   return solution
 
 def stampaGrid(data, minBound=None, maxBound=None, void="."):
+  if not data:
+    print("empty grid")
+    return
   if isinstance(data, dict):  
       def getValue(x, y):
           return data.get((x, y), void)  
