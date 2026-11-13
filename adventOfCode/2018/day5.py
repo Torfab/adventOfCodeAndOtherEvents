@@ -41,7 +41,7 @@ def reducePolymer(polymer, alphabet):
   return stack
 
 def solve(part):
-  rows= openFile("raw.txt")
+  rows=getOldAocInput(5)
   polymer=[x for x in parseRows(rows)]
   alphabet=generateAlphabet()
 
