@@ -58,6 +58,8 @@ def buildLinking(cell, grid, linking):
           continue
         if grid.get(tentative)==None:
           linking[letter]["void"]=linking.get(letter).get("void", 0)+1
+          linking["void"]=linking.get("void", {})
+          linking["void"][letter]=linking["void"].get(letter, 0)+1
           continue
         if grid.get(tentative)!=letter:
           linking[letter][grid[tentative]]=linking[letter].get(grid[tentative], 0)+1
@@ -70,7 +72,9 @@ def buildLinking(cell, grid, linking):
       
 
 def halveTheThings(linking):
-  for v in linking.values():
+  for k, v in linking.items():
+    if k=="void":
+      continue
     for k1 in v.keys():
       if(k1!="void"):
         v[k1]=v[k1]//2
@@ -93,34 +97,29 @@ def findBestUntilVoid(linking, letter, currentSolve, lettersSolved, totalSolved,
 
   print(letter, findMin, possibleLinks)
   
-  
+def addALink(reached, reachables, linking):
+  findMin=min((k for k in reachables if k not in reached), key=reachables.get)
+  reached.add(findMin) 
+  result=reachables[findMin]
+  for k in linking[findMin]:
+    reachables[k]=min(reachables.get(k, float("inf")), linking[findMin][k])
+  return result
 
 def solveLinking(linking):
   halveTheThings(linking) #i have double entries for everything but void
+  reached=set()
+  reached.add("void")
+  reachables={}
+  for k,v in linking["void"].items():
+    reachables[k]=v
   result=0
-  letters=list(linking.keys())
-  print(letters)
-  totalSolved=[]
-  lettersSolved=set()
-  #Solve the one forced
-  # solved=[]
-  # forced=[(x,y) for x,y in linking.items() if len(y)==1]
-  # for element in forced:
-  #   insertInSolved(solved, )
-  # print(forced)
-  for letter in letters:
-    if letter in lettersSolved:
-      continue
-    currentSolve=[]
-    result=result+findBestUntilVoid(linking, letter, currentSolve, lettersSolved, totalSolved, 0)
-
-  
-
-
+  while([k for k in reachables if k not in reached]):
+    print([k for k in reachables if k not in reached])
+    result=result+addALink(reached, reachables, linking)
+  return result
 def solve2():
   rows=openFile("raw.txt")
   grid, maxX, maxY=buildGrid(rows)
-  result=0
   letters=set(grid.values())
   linking={}
 
