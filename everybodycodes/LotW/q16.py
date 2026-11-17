@@ -29,52 +29,6 @@ def fixLetter(letter, row):
 
   return step, cursor, row, movedElements
 
-# def fixLetter2(letter, row):
-#   cursor=row.index(letter)
-#   step=0
-#   lastIndex=len(row)-1
-
-#   cursor, lastCursor=findNextCursors(letter, cursor, lastIndex, row)
-#   if(cursor==lastCursor):
-#     return 0, lastIndex, row
-
-#   while(cursor!=lastCursor):
-#     print(cursor, lastCursor)
-#     step=step+lastCursor-cursor+1
-#     row=row[:cursor]+list(reversed(row[cursor:lastCursor+1]))+row[lastCursor+1:]
-#     cursor, lastCursor=findNextCursors(letter, cursor, lastCursor, row)
-
-#   return step, cursor, row
-
-  return step, cursor, row
-
-
-def fixLetter3(innerRow, repetition):
-  letter=innerRow[0]
-  row=innerRow*2
-
-  lenRow=len(innerRow)
-  print("".join(row), lenRow, "LAVORO CON")
-  step2, cursor, row, movedElements=fixLetter(letter, row)
-  if(movedElements==0):
-    return 0, innerRow, True
-
-  #Somma di tutte le parti interne moltiplicat ala grandezza e gli step normali che fa, in aggiunta a quelli che si spostano esternamente moltiplicato per i turni 
-  realStep=(((repetition-4)*repetition)//8)*lenRow//2*(step2+1)+movedElements*repetition//4
-  
-  realInnerRow=row[cursor+1:]
-  print("A", "".join(realInnerRow))
-  lenRealInnerRow=len(realInnerRow)
-  realInnerRow=realInnerRow[:lenRealInnerRow//2]
-  print("B", "".join(realInnerRow))
-
-  return realStep, realInnerRow, False
-
-  #CAPIRE QUANTO FA
-  #CAPIRE COSA RIMANE
-
-
-
 def solve():
   rows=openFile("raw.txt")
   row=parseRows(rows)
@@ -91,39 +45,85 @@ def solve():
       return step
     letter=row[cursor+1]
 
-def solve2(part, repetition):
-  rows=openFile("raw.txt")
-  innerRow=parseRows(rows)
-  if(part==2):
-    row=innerRow*repetition
-  if(part==3):
-    row=innerRow*100
+def fixLetterDirectly(innerRow):
+  color=innerRow[0]
 
-  letter=row[0]
-  lenRow=len(row)
+  colorGroup=[]
+  gapGroup=[]
+  gapElement=[]
+  index=0
+  lenInnerRow=len(innerRow)
+  count=0
+  while(index<lenInnerRow):
+    if(innerRow[index]==color):
+      count=count+1
+      if(gapElement):
+        gapGroup.append("".join(gapElement))
+      gapElement=[]
+    else:
+      if count!=0:
+        colorGroup.append(count)
+        count=0
+      gapElement.append(innerRow[index])
+    index=index+1
 
-  step=0
+  if count != 0:
+    colorGroup.append(count)
+  if gapElement:
+    gapGroup.append("".join(gapElement))
+  # print(colorGroup, gapGroup)
   
-  while(True):
-    _, cursor, row, innerStep=fixLetter(letter, row)
-    print("fatto", innerStep)
-    step=step+innerStep
-    if(cursor==lenRow-1):
-      return step
-    letter=row[cursor+1]
 
-def solve3(part, repetition):
+  colorGroup=colorGroup[1:]
+  gapToHandle=len(colorGroup)
+
+  lastPartSaved=""
+  if(len(gapGroup)>gapToHandle):
+    lastPartSaved=gapGroup[gapToHandle]
+
+  gapGroup=gapGroup[:gapToHandle]
+
+
+  currentFlipLength=sum(colorGroup) + sum (len(x) for x in gapGroup)
+  # print(currentFlipLength)
+
+  dispari=True
+  flipElement=0
+  rearranged=[]
+  total=0
+  for _ in colorGroup:
+    total=total+currentFlipLength
+    if dispari:
+      elementChosen=gapGroup[flipElement][::-1]
+      addedColor=colorGroup[-flipElement-1]
+      dispari=False
+    else:
+      elementChosen=gapGroup[-flipElement-1]
+      addedColor=colorGroup[flipElement]
+      dispari=True
+      flipElement=flipElement+1
+    rearranged.append(elementChosen)
+
+    currentFlipLength=currentFlipLength-len(elementChosen)-addedColor
+  rearranged.reverse()
+
+  rearranged.append(lastPartSaved)
+  
+  return "".join(rearranged), total
+    
+
+
+
+
+def solve2(repetition):
   rows=openFile("raw.txt")
   innerRow=parseRows(rows)
+  innerRow=innerRow*repetition
   step=0
-  innerRow=innerRow*2
-  while(True):
-    innerStep, innerRow, finish=fixLetter3(innerRow, repetition)
-    print("QUACK", "".join(innerRow), innerStep)
-    step=step+innerStep
-    print(innerRow)
-    if(finish):
-      return step
+  while(innerRow):
+    innerRow, innerLength=fixLetterDirectly(innerRow)
+    print(innerLength, "copletataletterra")
+    step=step+innerLength
+  return step
 
-print(solve2(2, 100))
-print(solve3(2, 100))
+print(solve2(100))
