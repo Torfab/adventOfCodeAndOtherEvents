@@ -3,82 +3,121 @@ import heapq
 
 directions={(1,0):[(1,0), (0,-1), (0,1)], (-1,0):[(-1,0), (0,-1), (0,1)], (0,1): [(0,1), (1,0), (-1,0)], (0,-1): [(0,-1), (1,0), (-1,0)]}
 
-def parseRows(rows):
-  return rows
+#part 2 e part 3 risolta pen & paper trovando il ciclo migliore e la strada a li in avanti, mi riprometto di guardare qualche altro sviluppatore più bravo e vedere come lo ha implementato
 
-def explore(start,walls, allSulfurs, end):
-  
-  border=[(start[0], start[1], (1,0), tuple())]
-  shortCuts={}
-  allSulfurLocation=[(x[0], x[1]) for x in allSulfurs]
-
-  found=set()
-
-  alreadyDone=set()
-  step=0
-  while len(shortCuts) < (len(allSulfurs)+1):
-    newBorder=[]
+def followLine(cell, movement, walls, sulfurs, mainRoad):
+  step=1
+  sulfursTaken=[]
+  current=cell
+  while (current[1]!=mainRoad):
+    
     step=step+1
-    print(step)
-    for element in border:
-      cell=(element[0], element[1])
-      comingDirection=element[2]
-      status=element[3]
-
-      #Se già passato ignora
-      if(element in alreadyDone):
-        continue
-      else:
-        alreadyDone.add(element)
-
-        #per tutte le direzioni
-      for d in directions[comingDirection]:
-        tentative=sumTupleValueByValue(cell, d)
-        # print("valuto", tentative, "allo step", step)
-
-        # SE BECCA IL MURO
-        if tentative in walls:
-          continue
-
-        if d==(1,0) or d==(0,1):
-          flagDirection=1
-        else:
-          flagDirection=-1
-        realPosition=(tentative[0], tentative[1], flagDirection) 
-
-        # SE BECCA UN SULFURE
-        if tentative in allSulfurLocation:
-          #RAGGIUNTA DA OVEST NORD 1, EST SUD -1
-          # print("sulfur")
-
-          if realPosition in found:
-            continue
-          else:
-            found.add(realPosition)
-            shortCuts[realPosition]=step
-            newBorder.append((tentative[0], tentative[1], d, tuple(sorted(set(status)|{realPosition}))))
-
-        # se becca la fine
-        elif tentative == end:
-          print("end")
-          if realPosition in found:
-            continue
-          found.add(realPosition)
-          shortCuts[realPosition]=step
-
-        # NEL CASO STRADA PUlitA
-        else:
-          thingToAppend=(tentative[0], tentative[1], d,tuple(sorted(set(status)|{realPosition})))
-          if(thingToAppend in alreadyDone):
-            continue
-          newBorder.append(thingToAppend)
-    border=newBorder
-  return shortCuts
+    for d in directions[movement]:
+      tentative=sumTupleValueByValue(d, current)
+      if tentative not in walls:
+        current=tentative
+        movement=d
+        if current in sulfurs:
+          sulfursTaken.append(current)
+        break
+    
+  # print("found main road after", step)
+  return current, step, sulfursTaken
 
 
+def buildRoads(start, end, sulfurs, walls):
+  startRow=start[1]
+  cell=start
+
+  realRoads={}
+
+  while cell!=end:
+
+    tentative=sumTupleValueByValue(cell, (0,1))
+    if tentative not in walls:
+      subCell, subSteps, subSulfur=followLine(tentative, (0,1), walls, sulfurs, startRow)
+      realRoads[cell]=realRoads.get(cell, {})
+      realRoads[cell][subCell]=realRoads[cell].get(subCell, [])
+      realRoads[cell][subCell].append((subSteps, subSulfur))
+
+    tentative=sumTupleValueByValue(cell, (0,-1))
+    if tentative not in walls:
+      subCell, subSteps, subSulfur=followLine(tentative, (0,-1), walls, sulfurs, startRow)
+      realRoads[cell]=realRoads.get(cell, {})
+      realRoads[cell][subCell]=realRoads[cell].get(subCell, [])
+      realRoads[cell][subCell].append((subSteps, subSulfur))
+      
+    #check top and down
+
+    #check forawrd  
+    tentative=sumTupleValueByValue(cell, (1,0))
+    if tentative == end:
+      realRoads[cell]=realRoads.get(cell, {})
+      realRoads[cell][tentative]=[(1, [])]
+      realRoads[tentative]={}
+      realRoads[tentative][cell]=[(1, [])]
+      return realRoads
+    else:
+      realRoads[cell]=realRoads.get(cell, {})
+      realRoads[cell][tentative]=[(1, [])]
+      cell=tentative
+
+    tentative=sumTupleValueByValue(cell, (-1,0))
+    if tentative == end:
+      realRoads[cell]=realRoads.get(cell, {})
+      realRoads[cell][tentative]=[(1, [])]
+      realRoads[tentative]={}
+      realRoads[tentative][cell]=[(1, [])]
+      return realRoads
+    else:
+      realRoads[cell]=realRoads.get(cell, {})
+      realRoads[cell][tentative]=[(1, [])]
+
+  return realRoads
+
+def buildShortcuts(start, sulfurs, realRoads, end=None, me=None):
+  print()
+  print("STO FACENDO", me)
+  if(me):
+    sulfurs=[x for x in sulfurs if x!=me]
+  allFindables=len(sulfurs)*2
+  if (end):
+    allFindables=allFindables+1
+  print(len(sulfurs), sulfurs)
+  border=[]
+  heapq.heappush(border, (0, start))
+  foundRoad={}
+  visited=set()
+  founds=0
+  print("DAJEMBARE", allFindables)
+  while (founds<allFindables):
+    # print(foundRoad)
+    currentStep, currentCell=heapq.heappop(border)
+    if currentCell in visited:
+      continue
+    if currentCell==end:
+      foundRoad["end"]=[(currentStep, "end")]
+      founds=founds+1
+    visited.add(currentCell)
+    for key, value in realRoads[currentCell].items():
+      for road in value:
+        if road[1]:
+          for element in road[1]:
+            if element==me:
+              print("uh")
+              continue
+          # foundRoad[road[0]]=road[1]
+            foundRoad[element]=foundRoad.get(element,[])
+            foundRoad[element].append((road[0]+currentStep, key))
+            founds=founds+1
+        heapq.heappush(border, (currentStep+road[0], key))
+  print()
+  print("sulfurs", sulfurs)
+  print("foudRoad", foundRoad)
+  return foundRoad
 
 def solve():
-  rows=openFile("raw.txt")
+  rows=openFile("test.txt")
   grid, maxX, maxY=buildGrid(rows)
 
   start=[x for x,y in grid.items() if y=="S"][0]
@@ -89,30 +128,69 @@ def solve():
   additionalWalls=cageGridWithWalls((maxX,maxY))
   walls=walls|additionalWalls
 
-  allSulfurs=[]
-  for sulfur in sulfurs:
-    allSulfurs.append((sulfur[0], sulfur[1], -1))
-    allSulfurs.append((sulfur[0], sulfur[1], 1))
+  realRoads=buildRoads(start, end, sulfurs, walls)
 
-  explorations={}
-  print(explore(start, walls, allSulfurs, end))
+  # print(realRoads)
+
+  startShorcut=buildShortcuts(start, sulfurs, realRoads)
+  allShortcut={}
+  allShortcut[start]=startShorcut
+
+  for element, value in startShorcut.items():
+    for stepPosition in value:
+      print(element)
+      step, position=stepPosition
+      theShortCut=buildShortcuts(position, sulfurs, realRoads, end, element)
+      allShortcut[position]=theShortCut
   
-  #1 espora da start
+  print()
+  print()
 
-  #2 esplora dai sulfur
+  print(len(allShortcut))
 
-  ## PARE TRPPO COMPLESSO, meglio sfruttare la regolarità, 
-  ## il testo dice che i tunnel non si incontrano quidi io ogni volta che incont un tunnel posso TELETRASPORTARMI alla fine
+  #FINALMENTE DJAKSTRA
 
-  #3 dajkstra con status le cose già prese
+  border=[]
+
+  heapq.heappush(border, (0, start, frozenset()))
+
+  visited=set()
+
+  minSolution=float("inf")
+
+  while(border):
+    currentStep, currentCell, status=heapq.heappop(border)
+    print(currentStep, currentCell)
+    if(currentStep>minSolution):
+      print("sono arrivato a", currentStep, "quindi sono sicuro di", minSolution)
+      return minSolution
+    
+    if len(status)==len(sulfurs):
+      print("FINITO", currentStep, currentCell, allShortcut[currentCell]["end"][0][0])
+      print()
+      print("mi trovo a ", currentCell, "secondo me per arrivare a", end, "servono", allShortcut[currentCell]["end"][0][0], "passi")
+      print()
+
+      # print(status, sulfurs)
+      minSolution=min(minSolution, currentStep+allShortcut[currentCell]["end"][0][0])
+      continue
+    if((currentCell, status) in visited):
+      continue
+
+    for interestPoint, road in allShortcut[currentCell].items():
+      if interestPoint in status or interestPoint=="end":
+        continue
+      else:
+        for realRoad in road:
+          heapq.heappush(border, (currentStep+realRoad[0], realRoad[1], status| {interestPoint}))
+
+
   
-  #RAGGIUNTA DA OVEST SUD 1, EST NORD -1
+  return minSolution
 
-  #explore from every sulfur
+def solve2():
+  rows=openFile("test.txt")
+  grid, _, _ = buildGrid(rows)
 
-  # stampaGrid(grid)
-  
-  return 
 
-# evaluateTime(solve, repetitions=1)
-print(solve())
+print(solve2())
