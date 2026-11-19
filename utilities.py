@@ -70,6 +70,7 @@ def fromDistanceBuildSetOfRadialDirections3D(distance):
   resultSet.remove((0,0,0))
   return resultSet
 
+#Manhattan
 def distanceBetweenTwoTuples(a,b):
   return abs(a[0]-b[0])+abs(a[1]-b[1])
 
