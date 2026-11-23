@@ -53,7 +53,6 @@ def calculateTop3(finalLayer):
 def solve():
   rows=openFile("raw.txt")
   grid=parseRows(rows)
-  # print(grid)
 
   finalLayer=computeFinalLayer(grid)
   return calculateTop3(finalLayer)[0]
@@ -61,7 +60,6 @@ def solve():
 def solve2():
   rows=openFile("raw.txt")
   grid=parseRows(rows)
-  # print(grid)
   elements={"C":1, "M": 1, "Y": 1, "K": 1}
 
 

@@ -1,7 +1,7 @@
 from utility import *
 import functools
 
-# Primo approccio floodfill e complete* (with little heuristic) search for optimal number of spells, SUPERLENTO, la memoization aiuta e si arriva alla soluzione ma chiaramente l'approcico era da cmbiare
+# Primo approccio floodfill e complete* (with little heuristic) search for optimal number of spells, SUPERLENTO, la memoization aiuta e si arriva alla soluzione ma chiaramente l'approccio era da cambiare
 # Secondo approccio aiutati da LLM, è guardare il problema come "Minimum Vertex Cover", quindi divido la griglia in linee orizzontali e verticali che si connettono nelle singole celle
 # Quando il grafo è bipartito e non ci sono elementi del primo gruppo che toccano altr elemnti de primo gruppo, risolverlo è triviale nel senso che il lowerbound è garantito
 # L'idea dietro è che per ottenree il lowerbound provi a incastrare le linee orizzontali e verticali e se non è possible l'incastro "chiedi" ai precedenti se hanno altri posti dove andare
