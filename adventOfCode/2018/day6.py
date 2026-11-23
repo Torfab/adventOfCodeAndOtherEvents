@@ -105,7 +105,7 @@ def floodFillDistance(start, elements, distanceThreshold):
   return count
 
 def solve(part):
-  rows=openFile("raw.txt")
+  rows=getOldAocInput(6)
   elements=parseCoordinates(rows)
   if(part==1):
     candidates=findFiniteCandidates(elements)
