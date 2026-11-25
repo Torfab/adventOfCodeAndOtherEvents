@@ -490,3 +490,64 @@ def combine_congruences(a1, n1, a2, n2):  # Congruence with CRT
   lcm = (n1 * n2) // g
   t = (a1 + (a2 - a1) // g * m1 * n1) % lcm
   return t, lcm
+
+# Entropy
+def marginal_Shannon_Entropy(coords):
+  # It is resilient to stray nodes
+
+  n = len(coords)
+  if n == 0:
+    return 0.0
+
+  x_counts = {}
+  y_counts = {}
+
+  for x, y in coords:
+    x_counts[x] = x_counts.get(x, 0) + 1
+    y_counts[y] = y_counts.get(y, 0) + 1
+
+  entropy_y = 0.0
+  for count in y_counts.values():
+    p = count / n
+    entropy_y = entropy_y - p * math.log2(p)
+
+  entropy_x = 0.0
+  for count in x_counts.values():
+    p = count / n
+    entropy_x = entropy_x - p * math.log2(p)
+
+  # Pure alignment score (no bounding box penalty)
+  return  entropy_y + entropy_x
+
+
+
+def hartley_Entropy(coords):
+  #not resilient to stray nodes
+  n = len(coords)
+  if n == 0:
+    return 0
+
+  min_x = float('inf')
+  max_x = float('-inf')
+  min_y = float('inf')
+  max_y = float('-inf')
+
+  for x, y in coords:
+    if x < min_x:
+      min_x = x
+    if x > max_x:
+      max_x = x
+    if y < min_y:
+      min_y = y
+    if y > max_y:
+      max_y = y
+
+  # Add 1 to include both boundary edges (so a 1x1 box has area 1, not 0)
+  width = max_x - min_x + 1
+  height = max_y - min_y + 1
+
+  entropy_x = math.log2(width)
+  entropy_y = math.log2(height)
+
+  # Total bounding-box entropy (log2(width * height))
+  return entropy_y + entropy_x
