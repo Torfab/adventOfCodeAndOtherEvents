@@ -49,7 +49,6 @@ def solve(part):
     return evaluateMetadata1(row)[1]
   else:
     return evaluateMetadata2(row)[1]
-  return metaDataValue
 
 print(solve(1))
 print(solve(2))
