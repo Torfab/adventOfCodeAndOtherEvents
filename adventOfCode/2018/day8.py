@@ -43,7 +43,7 @@ def evaluateMetadata1(row, cursor=0):
   return cursor, metadataValue
 
 def solve(part):
-  rows=openFile("raw.txt")
+  rows=getOldAocInput(8)
   row=parseRows(rows)
   if(part==1):
     return evaluateMetadata1(row)[1]

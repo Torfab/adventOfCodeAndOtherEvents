@@ -46,7 +46,7 @@ def doATurn(posVel):
     posVel[i]["position"]=(posVel[i]["position"][0]+posVel[i]["velocity"][0], posVel[i]["position"][1]+posVel[i]["velocity"][1])
 
 def solve():
-  rows=openFile("raw.txt")
+  rows=getOldAocInput(10)
   posVel=parseRows(rows)
   step=0
   bestArea=float("inf")

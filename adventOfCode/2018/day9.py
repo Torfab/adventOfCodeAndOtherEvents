@@ -17,7 +17,7 @@ def playATurn(scoreGrid, plate, currentPlayer, turn):
   return 
 
 def solve(part):
-  rows=openFile("raw.txt")
+  rows=getOldAocInput(9)
   players, balls=parseRows(rows)
   if(part==2):
     balls=balls*100
